@@ -7,8 +7,8 @@ import { handleAgentRequest } from '../utils/agent-handler';
  */
 
 const advanceApp = new Hono();
-advanceApp.post('/', requirePayment('0.001', 'USDC'), (c) => 
-  handleAgentRequest(c, "Advance", "You are Geppetto (Advanced - Protected).")
+advanceApp.post('/', requirePayment("0.001", "0.002", "USDC"), (c) => 
+  handleAgentRequest(c, "Advance", "qwen3.6-plus", "You are Geppetto (Advanced - Protected).")
 );
 
 export default advanceApp;

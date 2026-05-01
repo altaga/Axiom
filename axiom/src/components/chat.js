@@ -240,7 +240,10 @@ export default function AIAppChat() {
       const history = chatGeneral
         .filter(m => m.type === "user" || m.type === "system")
         .slice(-5)
-        .map(m => ({ role: m.type === "user" ? "human" : "ai", content: m.message }));
+        .map(m => ({ 
+            role: m.type === "user" ? "user" : "assistant", 
+            content: m.message 
+        }));
 
       const res = await fetchWithPay(`${AI_URL}${tier.route}`, {
         method: "POST",

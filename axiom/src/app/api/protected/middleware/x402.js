@@ -8,12 +8,16 @@ const facilitatorClient = new HTTPFacilitatorClient({
   url: "https://x402.org/facilitator" 
 });
 
-export const requirePayment = (amount, token = "USDC", network = "eip155:84532") => {
+export const requirePayment = (baseAmount, toolAmount, token = "USDC", network = "eip155:84532") => {
   return async (c, next) => {
     const paymentSignature = c.req.header('PAYMENT-SIGNATURE');
+    const toolsEnabled = c.req.header('X-Tools-Enabled') === 'true';
+    
+    // Select price based on tool usage
+    const activeAmount = toolsEnabled ? toolAmount : baseAmount;
 
     // Convert decimal amount to smallest unit for EVM compatibility (USDC has 6 decimals)
-    const formattedAmount = token === "USDC" ? Math.floor(parseFloat(amount) * 1e6).toString() : amount;
+    const formattedAmount = token === "USDC" ? Math.floor(parseFloat(activeAmount) * 1e6).toString() : activeAmount;
 
     const requirements = {
       x402Version: 2,
@@ -37,24 +41,35 @@ export const requirePayment = (amount, token = "USDC", network = "eip155:84532")
 
     // 1. Intercept and demand payment
     if (!paymentSignature) {
+      console.log(`[x402_CHALLENGE] No signature found. Demanding ${activeAmount} ${token} for ${c.req.url}`);
+      
       // 🛰️ PROTOCOL CRITICAL: v2 requires Base64 encoded requirements in the PAYMENT-REQUIRED header
       const encodedReq = Buffer.from(JSON.stringify(requirements)).toString('base64');
       c.header('PAYMENT-REQUIRED', encodedReq);
       
+      console.log(`[x402_REQUIRED_HEADER] Set with encoded payload (${encodedReq.substring(0, 20)}...)`);
       return c.json(requirements, 402);
     }
 
     // 2. Verify the x402 signature cryptographically
     try {
+      console.log(`[x402_VERIFY] Received signature header. Decoding...`);
       // 🛰️ PROTOCOL CRITICAL: Decode the Base64 signature payload for the facilitator
       const decodedSignature = JSON.parse(Buffer.from(paymentSignature, 'base64').toString('utf8'));
       
+      console.log(`[x402_DECODED] Signature for resource: ${decodedSignature.resource?.url || 'unknown'}`);
+      console.log(`[x402_FACILITATOR] Verifying with ${process.env.X402_FACILITATOR_URL || "https://x402.fac.expo.app"}...`);
+      
       const isValid = await facilitatorClient.verify(decodedSignature, requirements.accepts[0]);
+      
       if (!isValid) {
+        console.warn(`[x402_INVALID] Facilitator rejected the payment signature.`);
         return c.json({ error: "Invalid or expired payment signature." }, 401);
       }
+      
+      console.log(`[x402_SUCCESS] Payment verified. Unlocking agent access.`);
     } catch (error) {
-      console.error("x402 Verification Error:", error);
+      console.error("[x402_ERROR] Handshake failed during verification:", error.message);
       return c.json({ error: "Payment verification failed." }, 500);
     }
 

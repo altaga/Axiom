@@ -27,18 +27,30 @@ export class ZeroGAgent {
     }
 
     async init() {
+        console.log(`[0G_AGENT_INIT] Initializing wallet for ${this.agentName}...`);
         this.wallet = new ethers.Wallet(this.privateKey, this.provider);
+        console.log(`[0G_AGENT_WALLET] Address: ${this.wallet.address}`);
+        
+        console.log(`[0G_AGENT_BROKER] Creating ZG Compute Broker...`);
         this.broker = await createZGComputeNetworkBroker(this.wallet);
+        console.log(`[0G_AGENT_READY] Broker established.`);
     }
 
     async create(modelName, systemPrompt) {
+        console.log(`[0G_SERVICE_DISCOVERY] Searching for model: ${modelName}`);
         const services = await this.broker.inference.listService();
+        console.log(`[0G_SERVICE_LIST] Found ${services.length} services:`);
+        services.forEach(s => console.log(`  - ${s.model} (Provider: ${s.provider})` || `  - ${s.model}`));
+
         const service = services.find(s => 
             s.model.toLowerCase() === modelName.toLowerCase() ||
             s.model.toLowerCase().includes(modelName.toLowerCase())
         );
 
-        if (!service) throw new Error(`Model [${modelName}] not found.`);
+        if (!service) {
+            console.error(`[0G_SERVICE_NOT_FOUND] Could not find provider for ${modelName}`);
+            throw new Error(`Model [${modelName}] not found.`);
+        }
 
         this.currentModel = service.model;
         this.currentProvider = service.provider.toLowerCase();
@@ -47,8 +59,13 @@ export class ZeroGAgent {
             output: service.outputPrice.toString()
         };
 
+        console.log(`[0G_SERVICE_SELECT] Using Provider: ${this.currentProvider} for Model: ${this.currentModel}`);
+        
+        console.log(`[0G_METADATA_FETCH] Fetching endpoint for provider...`);
         const { endpoint } = await this.broker.inference.getServiceMetadata(service.provider);
         this.endpoint = endpoint;
+        console.log(`[0G_ENDPOINT_RESOLVED] ${this.endpoint}`);
+        
         return this;
     }
 
@@ -59,46 +76,101 @@ export class ZeroGAgent {
 
     /**
      * DIRECT INFERENCE (No LangChain)
-     * Extremely lightweight and fast.
+     * Supports tool calling loop.
      */
     async invoke(messagesOrInput, config = {}) {
-        // Handle both {messages: []} and [{role:...}]
         const messages = messagesOrInput.messages || messagesOrInput;
+        const tools = config.tools || [];
         
-        if (this.tracker) await this.tracker.log("LLM_INVOKE_START", { model: this.currentModel });
+        console.log(`📡 [0G_INFERENCE] Model: ${this.currentModel} | Tools: ${tools.length}`);
+        if (this.tracker) await this.tracker.log("LLM_INVOKE_START", { model: this.currentModel, toolCount: tools.length });
 
-        // 🛡️ Get 0G Signature Headers
-        const headers = await this.broker.inference.requestProcessor.getHeader(this.currentProvider);
+        let currentMessages = [...messages];
+        let iteration = 0;
+        const maxIterations = 5;
 
-        // 🚀 Direct Fetch to 0G Provider (OpenAI Compatible)
-        const response = await fetch(`${this.endpoint}/chat/completions`, {
-            method: "POST",
-            headers: {
-                ...headers,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+        while (iteration < maxIterations) {
+            iteration++;
+
+            // 🛡️ Get 0G Signature Headers
+            const headers = await this.broker.inference.requestProcessor.getHeader(this.currentProvider);
+
+            const body = {
                 model: this.currentModel,
-                messages: messages,
+                messages: currentMessages,
                 temperature: 0,
                 stream: false
-            })
-        });
+            };
 
-        if (!response.ok) {
-            const errBody = await response.text();
-            throw new Error(`0G_INFERENCE_ERROR: ${response.status} - ${errBody}`);
+            if (tools.length > 0) {
+                body.tools = tools.map(t => ({
+                    type: "function",
+                    function: {
+                        name: t.name,
+                        description: t.description,
+                        parameters: t.parameters
+                    }
+                }));
+                body.tool_choice = "auto";
+            }
+
+            if (this.verbose) {
+                console.log(`[0G_INFERENCE_REQUEST] Body:`, JSON.stringify(body, null, 2));
+            }
+
+            // 🚀 Direct Fetch to 0G Provider
+            const response = await fetch(`${this.endpoint}/chat/completions`, {
+                method: "POST",
+                headers: {
+                    ...headers,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+                const errBody = await response.text();
+                throw new Error(`0G_INFERENCE_ERROR: ${response.status} - ${errBody}`);
+            }
+
+            const data = await response.json();
+            const responseMessage = data.choices[0]?.message;
+            const content = responseMessage?.content || "";
+            const toolCalls = responseMessage?.tool_calls || [];
+
+            if (toolCalls.length === 0) {
+                if (this.tracker) await this.tracker.log("LLM_INVOKE_COMPLETE");
+                return { 
+                    text: content, 
+                    receipt: { status: "processed", iterations: iteration } 
+                };
+            }
+
+            // Handle Tool Calls
+            currentMessages.push(responseMessage);
+            
+            for (const toolCall of toolCalls) {
+                const args = toolCall.function.arguments;
+                console.log(`🔧 [0G_TOOL_CALL] Executing ${toolCall.function.name} with args: ${args}`);
+                
+                const tool = tools.find(t => t.name === toolCall.function.name);
+                const result = tool 
+                    ? await tool.execute(JSON.parse(args))
+                    : `Tool ${toolCall.function.name} not found.`;
+
+                console.log(`✅ [0G_TOOL_RESULT] ${toolCall.function.name} returned: ${result.substring(0, 200)}${result.length > 200 ? '...' : ''}`);
+                
+                currentMessages.push({
+                    role: "tool",
+                    tool_call_id: toolCall.id,
+                    name: toolCall.function.name,
+                    content: result
+                });
+            }
+            
+            // Loop continues to send tool results back to LLM
         }
 
-        const data = await response.json();
-        const content = data.choices[0]?.message?.content || "";
-        
-        if (this.tracker) await this.tracker.log("LLM_INVOKE_COMPLETE");
-
-        // Simple mock receipt for now to stay lean
-        return { 
-            text: content, 
-            receipt: { status: "processed", cost_0g: 0 } 
-        };
+        throw new Error("Maximum tool calling iterations exceeded.");
     }
 }

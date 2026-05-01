@@ -11,7 +11,7 @@ if (!global.__0g_registry) {
 const registry = global.__0g_registry;
 
 export async function get0GAgent(tier, modelName, systemPrompt, tracker = null) {
-    const key = tier.toLowerCase();
+    const key = `${tier.toLowerCase()}-${modelName.toLowerCase()}`;
 
     if (registry[key]) {
         if (tracker) await tracker.log("AGENT_0G_CACHE_HIT");
