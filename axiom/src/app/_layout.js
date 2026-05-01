@@ -1,3 +1,4 @@
+import "../core/polyfills";
 /**
  * 🏗️ GEPPETTO LABS - ROOT APPLICATION LAYOUT
  * 
