@@ -21,36 +21,25 @@ Axiom is a full-stack, cross-platform AI gateway built on the [0G Compute Networ
 
 ### The Full Request Lifecycle
 
+### The Full Request Lifecycle
+
 ```mermaid
 sequenceDiagram
-    participant User as User (Browser/Mobile)
-    participant UI as Axiom Frontend (Expo)
-    participant x402c as x402 Client (@x402/fetch)
-    participant API as Hono API Route (Server)
-    participant x402s as x402 Middleware (Server)
-    participant Fac as x402 Facilitator (https://x402.org)
-    participant Broker as 0G Serving Broker
-    participant Node as 0G Compute Provider
+    participant User
+    participant App as Axiom App (Frontend)
+    participant Server as Axiom Node (Server)
+    participant 0G as 0G Network (Inference)
 
-    User->>UI: Types message, selects tier, clicks Send
-    UI->>x402c: wrapFetchWithPayment(fetch, ...) → POST /api/protected/{tier}
-    x402c->>API: Initial request (no payment header)
-    API->>x402s: requirePayment() middleware fires
-    x402s-->>x402c: HTTP 402 with Base64-encoded PAYMENT-REQUIRED header
-    x402c->>UI: Triggers wallet.signTypedData() (EIP-712 Permit)
-    UI->>User: MetaMask popup — sign the USDC transfer authorization
-    User->>UI: Approves signature
-    x402c->>API: Retry POST with PAYMENT-SIGNATURE header
-    API->>x402s: Middleware decodes & verifies signature
-    x402s->>Fac: facilitatorClient.verify(decodedSig, requirements)
-    Fac-->>x402s: isValid = true
-    x402s->>API: Calls next() — unlocks route handler
-    API->>Broker: get0GAgent(tier, model) → agent.invoke(messages)
-    Broker->>Node: POST /chat/completions + 0G-signed headers
-    Node-->>Broker: LLM response JSON
-    Broker-->>API: { text, receipt }
-    API-->>UI: { status, message, traceId, receipt }
-    UI->>User: Renders response + payment receipt badge
+    User->>App: Submits message & selects tier
+    App->>Server: Request AI Inference
+    Server-->>App: HTTP 402: Payment Required (x402)
+    App->>User: Prompts MetaMask (EIP-712 Sign)
+    User->>App: Signs payment authorization
+    App->>Server: Re-submit request + payment proof
+    Server->>0G: Authorize & execute inference
+    0G-->>Server: LLM Response + Proof of Execution
+    Server-->>App: Final response + Receipt
+    App->>User: Renders message & payment badge
 ```
 ---
 
