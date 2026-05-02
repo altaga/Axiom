@@ -1,5 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import { LinearGradient } from "expo-linear-gradient";
+import { useSmartSize } from "../providers/smartProvider";
 
 // x402 Libraries for the client-side payment protocol.
 import { x402Client } from "@x402/core/client";
@@ -60,6 +61,7 @@ const SUGGESTIONS = [
 ];
 
 export default function AIAppChat() {
+  const { isDesktop } = useSmartSize();
   const context = useContext(ContextModule);
   const { walletClient, account, status, connect, usdcBalance } = useWallet();
 
@@ -104,7 +106,7 @@ export default function AIAppChat() {
     }));
 
     const wrap = wrapFetchWithPayment(fetch, xClient);
-    
+
     // Intercept result to log success/failure of the handshake
     try {
       const response = await wrap(...args);
@@ -240,16 +242,16 @@ export default function AIAppChat() {
       const history = chatGeneral
         .filter(m => m.type === "user" || m.type === "system")
         .slice(-5)
-        .map(m => ({ 
-            role: m.type === "user" ? "user" : "assistant", 
-            content: m.message 
+        .map(m => ({
+          role: m.type === "user" ? "user" : "assistant",
+          content: m.message
         }));
 
       const res = await fetchWithPay(`${AI_URL}${tier.route}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Geppetto-Trace-Id": traceId,
+          "X-Axiom-Trace-Id": traceId,
           "X-Tools-Enabled": toolsEnabled ? "true" : "false",
         },
         body: JSON.stringify({
@@ -285,7 +287,7 @@ export default function AIAppChat() {
         chatGeneral: [
           ...newUserChat,
           {
-            message: data.message?.replace(/^\n+/, "") || "Geppetto did not provide a response.",
+            message: data.message?.replace(/^\n+/, "") || "Axiom did not provide a response.",
             type: "system",
             time: Date.now(),
             traceId: data.traceId || traceId,
@@ -321,7 +323,7 @@ export default function AIAppChat() {
   // FAUCET LOGIC
   const handleFaucet = useCallback(async () => {
     if (!account || faucetLoading) return;
-    
+
     setFaucetLoading(true);
     try {
       const response = await fetch("/api/public/faucet", {
@@ -360,17 +362,17 @@ export default function AIAppChat() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: isDesktop ? "#0e0e10" : "#131314" }]}
       keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
-      {/* SUB-HEADER: SESSION SPEND / FAUCET ACTION (Fixed Height) */}
-      {status === "connected" && (
+      {/* SUB-HEADER: SESSION SPEND / FAUCET ACTION (Fixed Height) - Hidden on Desktop */}
+      {status === "connected" && !isDesktop && (
         <View style={GeminiStyles.subHeader}>
           {parseFloat(usdcBalance) === 0 ? (
             <>
               <Text style={GeminiStyles.sessionSpendLabel}>Insufficient Funds</Text>
-              <Pressable 
-                style={[GeminiStyles.faucetButtonCohesive, faucetLoading && GeminiStyles.faucetButtonCohesiveDisabled]} 
+              <Pressable
+                style={[GeminiStyles.faucetButtonCohesive, faucetLoading && GeminiStyles.faucetButtonCohesiveDisabled]}
                 onPress={handleFaucet}
                 disabled={faucetLoading}
               >
@@ -399,7 +401,7 @@ export default function AIAppChat() {
           />
           <View style={[GeminiStyles.toolsMenuContainer, { paddingVertical: 8 }]}>
             <Text style={[GeminiStyles.modelItemSub, { paddingHorizontal: 16, paddingBottom: 8, color: '#9AA0A6', letterSpacing: 1, textTransform: 'uppercase', fontSize: 10 }]}>Agent Tools & APIs</Text>
-            
+
             {/* WEB SEARCH TOOL */}
             <Pressable
               style={[GeminiStyles.modelMenuItem, searchEnabled && GeminiStyles.modelMenuItemActive]}
@@ -563,14 +565,14 @@ export default function AIAppChat() {
                           </Text>
                         </View>
                       )}
-                      
+
                       {(() => {
                         try {
                           if (item.message.startsWith('{') && item.message.includes('finance_quote')) {
                             const data = JSON.parse(item.message);
                             return <FinanceCard data={data} />;
                           }
-                        } catch (e) {}
+                        } catch (e) { }
                         return renderMessageContent(item.message, false);
                       })()}
                     </View>
@@ -587,7 +589,7 @@ export default function AIAppChat() {
       </View>
 
       {/* INPUT AREA */}
-      <View style={GeminiStyles.inputBox}>
+      <View style={[GeminiStyles.inputBox, { marginHorizontal: isDesktop ? 0 : 8 }]}>
         {status !== "connected" ? (
           <Pressable style={styles.connectButton} onPress={connect}>
             <Text style={styles.connectText}>Connect Wallet to Chat</Text>
@@ -789,7 +791,7 @@ const MarkdownRules = {};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#131314",
+    backgroundColor: "#0e0e10",
     // CROSS-PLATFORM: Hide Scrollbars on Web browsers.
     ...Platform.select({
       web: {
@@ -802,7 +804,7 @@ const styles = StyleSheet.create({
   messageContainer: { marginBottom: 20, maxWidth: "85%" },
   userAlign: { alignSelf: "flex-end", alignItems: "flex-end" },
   systemAlign: { alignSelf: "flex-start", alignItems: "flex-start" },
-  bubble: { paddingHorizontal: 18, paddingVertical: 12, borderRadius: 24, width: "100%" },
+  bubble: { paddingHorizontal: 18, paddingVertical: 12, borderRadius: 24, minWidth: 100 },
   userBubble: { borderBottomRightRadius: 4 },
   systemBubble: { backgroundColor: "#1E1F20", borderBottomLeftRadius: 4, overflow: "hidden" },
   messageText: { fontSize: 16, lineHeight: 24, fontFamily: "Inter_400Regular", color: "white", flexShrink: 1, flexWrap: "wrap" },
@@ -830,4 +832,4 @@ const styles = StyleSheet.create({
   },
   connectButton: { paddingVertical: 12, alignItems: "center" },
   connectText: { color: "#6366F1", fontWeight: "700", fontFamily: "Inter_700Bold", fontSize: 14 },
-});
+});

@@ -25,7 +25,7 @@ export async function get0GAgent(tier, modelName, systemPrompt, tracker = null) 
 
     const agent = new ZeroGAgent({
         privateKey: privateKey,
-        agentName: `Geppetto-${tier}`,
+        agentName: `Axiom-${tier}`,
         verbose: process.env.VERBOSE_DEBUG === 'true',
         tracker: tracker
     });

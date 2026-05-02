@@ -8,7 +8,7 @@ import { handleAgentRequest } from '../utils/agent-handler';
 
 const basicApp = new Hono();
 basicApp.post('/', requirePayment("0.0001", "0.0003", "USDC"), (c) => 
-  handleAgentRequest(c, "Basic", "openai/gpt-5.4-mini", "You are Geppetto (Basic - Protected).")
+  handleAgentRequest(c, "Basic", "openai/gpt-5.4-mini", "You are Axiom (Basic - Protected).")
 );
 
 export default basicApp;

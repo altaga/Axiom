@@ -38,10 +38,10 @@ export default function RootLayout() {
 
   return (
     <React.Fragment>
-      {/* 🚀 PROVIDER HIERARCHY: SmartProvider (Framing) -> ContextProvider (State) -> WalletProvider (Auth) */}
-      <SmartProvider>
+      {/* 🚀 PROVIDER HIERARCHY: WalletProvider (Auth) -> ContextProvider (State) -> SmartProvider (Framing) */}
+      <WalletProvider>
         <ContextProvider>
-          <WalletProvider>
+          <SmartProvider>
             {/* NAVIGATION: Defines the screen flow and transition animations. */}
             <Stack
               initialRouteName="(screens)/connect"
@@ -57,9 +57,9 @@ export default function RootLayout() {
             </Stack>
             <StatusBar style="auto" />
             <Toaster position="top-center" richColors />
-          </WalletProvider>
+          </SmartProvider>
         </ContextProvider>
-      </SmartProvider>
+      </WalletProvider>
     </React.Fragment>
   );
 }

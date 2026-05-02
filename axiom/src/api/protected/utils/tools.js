@@ -19,16 +19,34 @@ export const searchTool = {
         required: ["query"]
     },
     execute: async ({ query }) => {
-        try {
-            const results = await ddgSearch(query, { safeSearch: 1 });
-            return JSON.stringify(results.results.slice(0, 3).map(r => ({
-                title: r.title,
-                snippet: r.description,
-                url: r.url
-            })));
-        } catch (err) {
-            return `Search failed: ${err.message}`;
-        }
+        const { searchNews } = await import("duck-duck-scrape");
+        
+        const performSearch = async (retryCount = 0, useNews = false) => {
+            try {
+                const searchFn = useNews ? searchNews : ddgSearch;
+                const results = await searchFn(query, { safeSearch: -1 });
+                
+                const list = useNews ? results.results : results.results;
+                return JSON.stringify(list.slice(0, 3).map(r => ({
+                    title: r.title,
+                    snippet: r.description || r.excerpt,
+                    url: r.url
+                })));
+            } catch (err) {
+                // If web search is blocked, try again with news search
+                if (!useNews && err.message.includes("anomaly")) {
+                    return performSearch(0, true);
+                }
+                
+                if (err.message.includes("anomaly") && retryCount < 1) {
+                    const delay = Math.floor(Math.random() * 1000) + 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return performSearch(retryCount + 1, useNews);
+                }
+                return `Search failed: ${err.message}`;
+            }
+        };
+        return await performSearch();
     }
 };
 

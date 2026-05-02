@@ -7,8 +7,8 @@ import { handleAgentRequest } from '../utils/agent-handler';
  */
 
 const expertApp = new Hono();
-expertApp.post('/', requirePayment("0.01", "0.02", "USDC"), (c) => 
-  handleAgentRequest(c, "Expert", "deepseek/deepseek-chat-v3-0324", "You are Geppetto (Expert - Protected).")
+expertApp.post('/', requirePayment("0.01", "0.02", "USDC"), (c) =>
+  handleAgentRequest(c, "Expert", "deepseek/deepseek-chat-v3-0324", "You are Axiom (Expert - Protected).")
 );
 
 export default expertApp;

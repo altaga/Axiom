@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import * as handlers from './handlers'; 
+import * as handlers from '../../../api/protected/handlers'; 
 
 /**
  * 🧠 PROTECTED API HUB (JS Edition)

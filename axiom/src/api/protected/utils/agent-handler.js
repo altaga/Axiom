@@ -1,5 +1,5 @@
-import { get0GAgent } from "../../../../core/0g-registry";
-import { parseAgentOutput } from "../../../../core/llm";
+import { get0GAgent } from "../../../core/0g-registry";
+import { parseAgentOutput } from "../../../core/llm";
 import { ALL_TOOLS } from "./tools";
 
 /**
@@ -10,7 +10,7 @@ import { ALL_TOOLS } from "./tools";
  */
 
 export const handleAgentRequest = async (c, tier, modelName, systemPrompt) => {
-    const traceId = c.req.header("X-Geppetto-Trace-Id") || `trace-${Date.now()}`;
+    const traceId = c.req.header("X-Axiom-Trace-Id") || `trace-${Date.now()}`;
     const toolsEnabled = c.req.header("X-Tools-Enabled") === "true";
     const body = await c.req.json();
     const message = body.message || body.prompt;
@@ -22,7 +22,7 @@ export const handleAgentRequest = async (c, tier, modelName, systemPrompt) => {
 
     try {
         const agent = await get0GAgent(tier, modelName, systemPrompt);
-        
+
         const messages = [
             { role: "system", content: systemPrompt },
             ...history,

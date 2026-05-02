@@ -33,9 +33,8 @@ export const NavigatorBarHeight = screenHeight - windowHeight;
 const GlobalStyles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     backgroundColor,
+    width: "100%",
   },
   header: {
     height: header,
@@ -44,7 +43,7 @@ const GlobalStyles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12, // Reduced for mobile focus
   },
   main: {
     flex: 1,
@@ -106,7 +105,6 @@ export const GeminiStyles = StyleSheet.create({
     borderRadius: 28,
     paddingHorizontal: 12,
     paddingVertical: 4,
-    marginHorizontal: 16,
     marginBottom: 16,
     gap: 4,
     borderWidth: 1,
@@ -268,7 +266,7 @@ export const GeminiStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 24,
+    paddingHorizontal: 16, // Reduced for mobile
     borderBottomWidth: 1,
     borderTopWidth: 1,
     borderTopColor: "rgba(255, 255, 255, 0.05)",

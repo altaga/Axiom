@@ -1,9 +1,9 @@
 /**
- * 🚀 GEPPETTO LABS - SPLASH / ROUTE SELECTOR
+ * 🚀 AXIOM LABS - SPLASH / ROUTE SELECTOR
  * 
  * This is the landing screen represented by the root index.
  * It serves two purposes:
- * 1. A visual "Loading" splash screen with the Geppetto branding.
+ * 1. A visual "Loading" splash screen with the Axiom branding.
  * 2. An intelligent router that directs the user to either 'Connect' or 'Main' 
  *    based on their current wallet session status.
  */
@@ -26,13 +26,13 @@ export default function SplashLoading() {
    */
   useEffect(() => {
     if (status === "loading") return; // Latch: Do nothing while provider is initializing.
-    
+
     // REDIRECT: To the main chat dashboard if a session already exists.
     if (status === "connected") {
       router.replace("/(screens)/main");
       return;
     }
-    
+
     // REDIRECT: To the wallet connection landing page if no session is detected.
     if (status === "disconnected") {
       router.replace("/(screens)/connect");

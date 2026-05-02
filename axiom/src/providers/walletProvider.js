@@ -1,5 +1,5 @@
 /**
- * 💳 GEPPETTO LABS - ETHEREUM WALLET PROVIDER
+ * 💳 AXIOM LABS - ETHEREUM WALLET PROVIDER
  * 
  * This provider manages the connection to the user's EVM wallet (e.g., MetaMask).
  * It uses the 'viem' library for blockchain interactions and targets Base Sepolia.
@@ -104,7 +104,7 @@ export const WalletProvider = ({ children }) => {
       setAccount(walletAddress);
       setBalance(formatEther(balanceWei)); // Convert Wei to human-readable Ether.
       setUsdcBalance(formatUnits(usdcRaw, 6)); // USDC has 6 decimals.
-      
+
       setCookie(COOKIE_NAME, walletAddress, 7); // Persist session for 7 days.
       setStatus("connected");
     } catch (err) {

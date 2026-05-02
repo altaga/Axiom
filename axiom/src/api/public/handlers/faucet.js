@@ -54,7 +54,7 @@ const ERC20_ABI = [
 const faucetApp = new Hono();
 
 faucetApp.post("/", async (c) => {
-  const traceId = c.req.header("X-Geppetto-Trace-Id") || Math.random().toString(36).substring(7);
+  const traceId = c.req.header("X-Axiom-Trace-Id") || Math.random().toString(36).substring(7);
 
   try {
     const { address, mode = "standard" } = await c.req.json();

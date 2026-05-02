@@ -31,7 +31,7 @@ export default function Connect() {
 
   return (
     // UI: Centered login card on a deep matte-black background.
-    <View style={[GlobalStyles.container, { backgroundColor: "#131314" }]}>
+    <View style={[GlobalStyles.container, { backgroundColor: "#131314", alignItems: "center", justifyContent: "center" }]}>
       <View style={styles.card}>
         {/* HEADER SECTION: Branding and Product Identity */}
         <View style={styles.headerContainer}>

@@ -1,5 +1,5 @@
 /**
- * 🧠 GEPPETTO LABS - GLOBAL DATA CONTEXT (LEGACY CLASS PATTERN)
+ * 🧠 AXIOM LABS - GLOBAL DATA CONTEXT (LEGACY CLASS PATTERN)
  * 
  * This module manages the global application state using the React Context API.
  * It primarily stores the 'chatGeneral' message history and provides synchronous/asynchronous 
@@ -23,7 +23,10 @@ class ContextProvider extends React.Component {
         // chatGeneral: Shared array of message objects {message, type, time, tool}.
         chatGeneral: [
           {
-            message: `Hello i'm Geppetto - a monetized AI agent`,
+            message: `I'm AXIOM - an autonomous agent.
+
+I can use APIs, pay per request, and execute tasks for you.
+What would you like to do?`,
             type: "system",
             time: Date.now(),
             tool: "",
@@ -37,7 +40,7 @@ class ContextProvider extends React.Component {
    * SET VALUE: Synchronous state update with an optional callback.
    * Merges the provided object into the existing global 'value'.
    */
-  setValue = (value, then = () => {}) => {
+  setValue = (value, then = () => { }) => {
     this.setState(
       {
         value: {
@@ -53,7 +56,7 @@ class ContextProvider extends React.Component {
    * SET VALUE ASYNC: Promise-based state update.
    * Forces the component to wait for state resolution before continuing (e.g., awaiting message additions).
    */
-  setValueAsync = async (value, then = () => {}) => {
+  setValueAsync = async (value, then = () => { }) => {
     await new Promise((resolve) =>
       this.setState(
         {

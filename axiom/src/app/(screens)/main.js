@@ -9,10 +9,13 @@ import LogoText from "../../assets/logotxtb.png"; // Horizontal logo variant.
 import AIAppChat from "../../components/chat";
 import ConnectWallet from "../../components/walletButtonHeader";
 import GlobalStyles from "../../core/styles";
+import { useSmartSize } from "../../providers/smartProvider";
 import { useWallet } from "../../providers/walletProvider";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Main() {
   const { status } = useWallet();
+  const { isDesktop } = useSmartSize();
   const router = useRouter();
   const redirectedRef = useRef(false); // Latch to prevent multiple redirect cycles.
   const [clickCount, setClickCount] = useState(0);
@@ -25,7 +28,7 @@ export default function Main() {
       const next = prev + 1;
       if (next === 3) {
         toast.success("Axiom Protocol Activated 🚀", {
-          description: "Geppetto Experimental Mode: Enabled",
+          description: "Axiom Experimental Mode: Enabled",
           duration: 4000,
         });
         return 0;
@@ -55,41 +58,57 @@ export default function Main() {
   return (
     // UI: Safe area wrapper for the main application viewport.
     <SafeAreaView style={GlobalStyles.container}>
-      {/* HEADER: Contains branding and the compact wallet connection toggle. */}
-      <View style={GlobalStyles.header}>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-          {/* MENU: Placeholder for future side-navigation functionality. */}
-          <Pressable onPress={handleLogoPress}>
-            <Image
-              source={LogoText}
-              accessibilityLabel="Logo Text"
+      {/* HEADER: Contains branding and the compact wallet connection toggle. Hidded on Desktop. */}
+      {!isDesktop && (
+        <View style={GlobalStyles.header}>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+            {/* MENU: Placeholder for future side-navigation functionality. */}
+            <Pressable onPress={handleLogoPress}>
+              <Image
+                source={LogoText}
+                accessibilityLabel="Logo Text"
+                style={{
+                  width: 80,
+                  height: 24,
+                  resizeMode: "contain",
+                  tintColor: "#FFFFFF"
+                }}
+              />
+            </Pressable>
+
+            
+          </View>
+{/* MOBILE DASHBOARD LINK */}
+            <Pressable
+              onPress={() => router.push("/dashboard")}
               style={{
-                width: 80,
-                height: 24,
-                resizeMode: "contain",
-                tintColor: "#FFFFFF"
+                padding: 8,
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: 'rgba(255, 255, 255, 0.1)'
               }}
-            />
-          </Pressable>
-        </View>
+            >
+              <Ionicons name="grid-outline" size={18} color="#FFFFFF" />
+            </Pressable>
+          <Text style={{
+            color: "#9AA0A6",
+            fontSize: 7,
+            fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+            textTransform: "uppercase",
+            textAlign: 'center',
+            letterSpacing: 2,
+            opacity: 0.8,
+          }}>
+            x402 Gateway{"\n"}Pay-per-call AI
+          </Text>
 
-        <Text style={{
-          color: "#9AA0A6",
-          fontSize: 7,
-          fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
-          textTransform: "uppercase",
-          textAlign: 'center',
-          letterSpacing: 2,
-          opacity: 0.8,
-        }}>
-          x402 Gateway{"\n"}Pay-per-call AI
-        </Text>
-
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          {/* WALLET BUTTON: Header-optimized variant. */}
-          <ConnectWallet />
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {/* WALLET BUTTON: Header-optimized variant. */}
+            <ConnectWallet />
+          </View>
         </View>
-      </View>
+      )}
 
       {/* CHAT CONTAINER: Housing for the core conversational AI component. */}
       <View style={GlobalStyles.main}>

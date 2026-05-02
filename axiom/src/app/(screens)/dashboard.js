@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Image, Platform } from 'react-native';
 import { Stack } from 'expo-router';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons, Feather } from '@expo/vector-icons';
+import { useSmartSize } from '../../providers/smartProvider';
 
-/**
- * 🦾 0G NEURAL DASHBOARD
- * 
- * Aesthetic: Brutal Editorial / High-Contrast Monochrome
- * Accessible, Opinionated, and Mechanical.
- */
-
-const ACCENT = '#DFFF00'; // Neon Chartreuse
-const BG = '#050505';     // Deep Obsidian
-const BORDER = '#1A1A1A'; // Hard Edge
+// Design Tokens
+const BG = '#0e0e10';
+const SURFACE = '#1E1F20';
+const TEXT_PRIMARY = '#FFFFFF';
+const TEXT_STANDARD = '#E3E3E3';
+const TEXT_MUTED = '#9AA0A6';
+const BORDER = 'rgba(255, 255, 255, 0.1)';
+const ACCENT_RED = '#8B0000';
+const ACCENT_GREEN = '#34D399';
+const ACCENT_GOLD = '#F59E0B';
 
 export default function DashboardPage() {
+    const { isDesktop } = useSmartSize();
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -21,7 +25,9 @@ export default function DashboardPage() {
         try {
             const res = await fetch('/api/dashboard');
             const data = await res.json();
-            setStats(data);
+            if (data.success) {
+                setStats(data);
+            }
         } catch (err) {
             console.error('DASHBOARD_FETCH_FAILED', err);
         } finally {
@@ -31,88 +37,140 @@ export default function DashboardPage() {
 
     useEffect(() => {
         fetchStats();
-        const interval = setInterval(fetchStats, 10000); // Auto-refresh every 10s
+        const interval = setInterval(fetchStats, 60000);
         return () => clearInterval(interval);
     }, []);
 
+    const formatTokens = (val) => {
+        const num = parseFloat(val);
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+        return num.toString();
+    };
+
     if (loading) {
         return (
-            <View style={styles.container}>
-                <ActivityIndicator color={ACCENT} size="large" />
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator color={TEXT_PRIMARY} size="large" />
+                <Text style={[styles.standardText, { marginTop: 12, color: TEXT_MUTED }]}>LOADING_AXIOM_0G...</Text>
             </View>
         );
     }
 
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        <SafeAreaView style={styles.container}>
             <Stack.Screen options={{ headerShown: false }} />
             
-            {/* 📰 HEADER: Editorial Contrast */}
-            <View style={styles.header}>
-                <Text style={styles.preTitle}>NETWORK_OPERATIONS</Text>
-                <Text style={styles.title}>NEURAL_DASHBOARD</Text>
-                <View style={styles.statusPill}>
-                    <View style={styles.dot} />
-                    <Text style={styles.statusText}>{stats?.network} // ONLINE</Text>
-                </View>
-            </View>
-
-            {/* 📊 METRICS GRID */}
-            <View style={styles.grid}>
-                {stats?.data.map((item, idx) => (
-                    <View key={idx} style={[styles.card, !item.active && styles.cardInactive]}>
-                        <View style={styles.cardHeader}>
-                            <Text style={styles.tierLabel}>{item.tier}</Text>
-                            <Text style={styles.statusBadge}>{item.active ? 'WARM' : 'COLD'}</Text>
+            <ScrollView 
+                style={styles.container} 
+                contentContainerStyle={styles.content}
+                showsVerticalScrollIndicator={false}
+            >
+                {/* 🎩 HEADER AREA - Hidden on Desktop */}
+                {!isDesktop && (
+                    <View style={styles.header}>
+                        <View style={styles.headerLeft}>
+                            <Text style={styles.logoText}>AXIOM</Text>
+                            <Text style={styles.logoSubtext}>0G GATEWAY</Text>
                         </View>
+                        <TouchableOpacity style={styles.disconnectBtn}>
+                            <Text style={styles.disconnectBtnText}>Disconnect</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
 
-                        {item.active ? (
+                {/* 📰 PAGE TITLE & WALLET */}
+                <View style={styles.pageHeader}>
+                    <Text style={styles.title}>AXIOM 0G DASHBOARD</Text>
+                    <Text style={styles.walletText}>WALLET: {stats?.address || "0XC86A7D5678F0ADE1A6CBBD3A8688225C..."}</Text>
+                </View>
+
+                {/* 🏦 TOP METRIC CARDS */}
+                <View style={styles.metricsRow}>
+                    <View style={styles.metricCard}>
+                        <Text style={styles.metricLabel}>NATIVE A0GI</Text>
+                        <Text style={styles.metricValue}>{Number(parseFloat(stats?.nativeBalance).toFixed(6)).toString()}</Text>
+                        <Text style={styles.metricSubtext}>≈ ${stats?.nativeUSDC} USD</Text>
+                    </View>
+                    <View style={styles.metricCard}>
+                        <Text style={styles.metricLabel}>LEDGER AVAILABLE</Text>
+                        <Text style={[styles.metricValue, { color: ACCENT_GOLD }]}>{Number(parseFloat(stats?.ledger?.available).toFixed(6)).toString()}</Text>
+                        <Text style={styles.metricSubtext}>≈ ${stats?.ledger?.availableUSDC} USD</Text>
+                    </View>
+                </View>
+
+                {/* 📊 CREDITS OVERVIEW CARD */}
+                <View style={styles.overviewCard}>
+                    <View style={styles.overviewItem}>
+                        <Text style={styles.overviewLabel}>TOTAL_CREDITS</Text>
+                        <Text style={styles.overviewValue}>{stats?.ledger?.total}</Text>
+                    </View>
+                    <View style={styles.overviewDivider} />
+                    <View style={styles.overviewItem}>
+                        <Text style={styles.overviewLabel}>LOCKED_SUBS</Text>
+                        <Text style={styles.overviewValue}>{stats?.ledger?.locked}</Text>
+                    </View>
+                </View>
+
+                {/* 🤖 MODEL SUB-ACCOUNTS */}
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>MODEL SUB-ACCOUNTS</Text>
+                    <View style={styles.sectionLine} />
+                </View>
+
+                <View style={styles.modelList}>
+                    {stats?.subAccounts?.map((item, idx) => (
+                        <View key={idx} style={styles.modelCard}>
+                            <View style={styles.cardHeader}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.modelTier}>
+                                        {item.tier} — {item.tier === "BASIC" ? "FAST" : item.tier === "ADVANCED" ? "SMART" : "POWERFUL"}
+                                    </Text>
+                                    <Text style={styles.modelName}>{item.model}</Text>
+                                </View>
+                                <View style={styles.activeBadge}>
+                                    <Text style={styles.activeBadgeText}>ACTIVE</Text>
+                                </View>
+                            </View>
+
+                            <View style={styles.cardDivider} />
+
                             <View style={styles.cardBody}>
-                                <View style={styles.dataRow}>
-                                    <Text style={styles.dataKey}>PROVIDER</Text>
-                                    <Text style={styles.dataValue} numberOfLines={1}>{item.provider}</Text>
+                                <View style={styles.bodyRow}>
+                                    <Text style={styles.bodyLabel}>BAL: </Text>
+                                    <Text style={styles.bodyValue}>{Number(parseFloat(item.balance).toFixed(6)).toString()} Credits</Text>
                                 </View>
-                                <View style={styles.dataRow}>
-                                    <Text style={styles.dataKey}>BALANCE</Text>
-                                    <Text style={[styles.dataValue, styles.highlightText]}>{parseFloat(item.balance).toFixed(4)} $0G</Text>
-                                </View>
-                                <View style={styles.dataRow}>
-                                    <Text style={styles.dataKey}>MODEL</Text>
-                                    <Text style={styles.dataValue}>{item.model}</Text>
-                                </View>
-                                <View style={styles.divider} />
-                                <View style={styles.pricingRow}>
-                                    <Text style={styles.dataKey}>PRICING (IN/OUT)</Text>
-                                    <Text style={styles.pricingText}>
-                                        {item.pricing.input} / {item.pricing.output}
+                                <View style={styles.bodyRow}>
+                                    <Text style={styles.bodyLabel}>TOKEN CAP: </Text>
+                                    <Text style={styles.bodyValue}>
+                                        {formatTokens(item.tokenRange.input)} (IN) — {formatTokens(item.tokenRange.output)} (OUT)
                                     </Text>
                                 </View>
+                                {item.pricing.input !== "0" && (
+                                    <View style={styles.bodyRow}>
+                                        <Text style={styles.bodyLabel}>PRICING: </Text>
+                                        <Text style={styles.bodyValue}>{item.pricing.input} / {item.pricing.output}</Text>
+                                    </View>
+                                )}
+                                <View style={[styles.bodyRow, { marginTop: 4 }]}>
+                                    <Text style={styles.bodyLabel}>PROVIDER: </Text>
+                                    <Text style={styles.bodyValue} numberOfLines={1}>{item.provider}</Text>
+                                </View>
                             </View>
-                        ) : (
-                            <View style={styles.cardBodyCenter}>
-                                <Text style={styles.inactiveText}>INSTANCE_OFFLINE</Text>
-                                <Text style={styles.subtext}>Awaiting first request for initialization.</Text>
-                            </View>
-                        )}
-                    </View>
-                ))}
-            </View>
+                        </View>
+                    ))}
+                </View>
 
-            {/* 🔗 SYSTEM INFO */}
-            <View style={styles.footer}>
-                <View style={styles.footerBlock}>
-                    <Text style={styles.footerKey}>CHAIN_ID</Text>
-                    <Text style={styles.footerValue}>{stats?.chainId}</Text>
+                {/* 🔄 SYNC FOOTER */}
+                <View style={styles.footer}>
+                    <Text style={styles.footerLabel}>LAST_SCAN: {new Date(stats?.timestamp).toLocaleTimeString()}</Text>
+                    <TouchableOpacity style={styles.syncBtn} onPress={fetchStats}>
+                        <Ionicons name="scan" size={14} color={TEXT_MUTED} />
+                        <Text style={styles.syncBtnText}>RE_SCAN_SYSTEM</Text>
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.footerBlock}>
-                    <Text style={styles.footerKey}>LAST_SYNC</Text>
-                    <Text style={styles.footerValue}>{new Date(stats?.timestamp).toLocaleTimeString()}</Text>
-                </View>
-                <TouchableOpacity style={styles.refreshBtn} onPress={fetchStats}>
-                    <Text style={styles.refreshBtnText}>REFRESH_HANDSHAKE</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </SafeAreaView>
     );
 }
 
@@ -122,172 +180,215 @@ const styles = StyleSheet.create({
         backgroundColor: BG,
     },
     content: {
-        padding: 24,
-        paddingTop: 60,
+        padding: 20,
+        paddingBottom: 40,
     },
     header: {
-        marginBottom: 48,
-    },
-    preTitle: {
-        color: ACCENT,
-        fontFamily: 'Inter_700Bold',
-        fontSize: 12,
-        letterSpacing: 4,
-        marginBottom: 8,
-    },
-    title: {
-        color: '#FFF',
-        fontFamily: 'Bungee_400Regular',
-        fontSize: 48,
-        lineHeight: 48,
-        marginBottom: 16,
-    },
-    statusPill: {
         flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: BORDER,
-        paddingVertical: 6,
-        paddingHorizontal: 12,
-        borderRadius: 9999,
-        alignSelf: 'flex-start',
+        marginBottom: 32,
     },
-    dot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        backgroundColor: ACCENT,
-        marginRight: 8,
+    headerLeft: {
+        gap: 2,
     },
-    statusText: {
-        color: '#666',
-        fontFamily: 'Inter_400Regular',
-        fontSize: 10,
+    logoText: {
+        color: TEXT_PRIMARY,
+        fontFamily: 'Inter_700Bold',
+        fontSize: 18,
+    },
+    logoSubtext: {
+        color: TEXT_MUTED,
+        fontSize: 8,
+        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
         letterSpacing: 1,
     },
-    grid: {
-        flexDirection: 'column',
-        gap: 20,
+    disconnectBtn: {
+        borderWidth: 1,
+        borderColor: ACCENT_RED,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 99,
     },
-    card: {
-        backgroundColor: '#0A0A0A',
+    disconnectBtnText: {
+        color: ACCENT_RED,
+        fontFamily: 'Inter_700Bold',
+        fontSize: 10,
+    },
+    pageHeader: {
+        marginBottom: 24,
+    },
+    title: {
+        color: TEXT_PRIMARY,
+        fontFamily: 'Inter_700Bold',
+        fontSize: 28,
+        marginBottom: 4,
+    },
+    walletText: {
+        color: TEXT_MUTED,
+        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+        fontSize: 10,
+    },
+    metricsRow: {
+        flexDirection: 'row',
+        gap: 12,
+        marginBottom: 12,
+    },
+    metricCard: {
+        flex: 1,
+        backgroundColor: SURFACE,
+        borderRadius: 12,
+        padding: 16,
         borderWidth: 1,
         borderColor: BORDER,
-        padding: 20,
-        borderRadius: 0, // Razor sharp edges
     },
-    cardInactive: {
-        opacity: 0.5,
-        borderStyle: 'dashed',
+    metricLabel: {
+        color: TEXT_STANDARD,
+        fontSize: 9,
+        fontFamily: 'Inter_700Bold',
+        marginBottom: 8,
+    },
+    metricValue: {
+        color: TEXT_PRIMARY,
+        fontSize: 20,
+        fontFamily: 'Inter_700Bold',
+    },
+    metricSubtext: {
+        color: TEXT_MUTED,
+        fontSize: 10,
+        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+        marginTop: 4,
+    },
+    overviewCard: {
+        backgroundColor: SURFACE,
+        borderRadius: 12,
+        padding: 16,
+        borderWidth: 1,
+        borderColor: BORDER,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 32,
+    },
+    overviewItem: {
+        flex: 1,
+        gap: 4,
+    },
+    overviewLabel: {
+        color: TEXT_MUTED,
+        fontSize: 8,
+        fontFamily: 'Inter_700Bold',
+    },
+    overviewValue: {
+        color: TEXT_STANDARD,
+        fontSize: 13,
+        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    },
+    overviewDivider: {
+        width: 1,
+        height: 24,
+        backgroundColor: BORDER,
+        marginHorizontal: 16,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        marginBottom: 20,
+    },
+    sectionTitle: {
+        color: TEXT_MUTED,
+        fontSize: 11,
+        fontFamily: 'Inter_700Bold',
+        letterSpacing: 1,
+    },
+    sectionLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: BORDER,
+    },
+    modelList: {
+        gap: 12,
+    },
+    modelCard: {
+        backgroundColor: SURFACE,
+        borderRadius: 12,
+        padding: 16,
+        borderWidth: 1,
+        borderColor: BORDER,
     },
     cardHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 24,
+        alignItems: 'flex-start',
     },
-    tierLabel: {
-        color: '#FFF',
-        fontFamily: 'Bungee_400Regular',
-        fontSize: 20,
+    modelTier: {
+        color: TEXT_PRIMARY,
+        fontFamily: 'Inter_700Bold',
+        fontSize: 14,
     },
-    statusBadge: {
-        backgroundColor: '#111',
-        color: '#666',
+    modelName: {
+        color: TEXT_MUTED,
+        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+        fontSize: 9,
+        marginTop: 2,
+    },
+    activeBadge: {
+        backgroundColor: 'rgba(52, 211, 153, 0.1)',
         paddingHorizontal: 8,
         paddingVertical: 4,
-        fontSize: 10,
+        borderRadius: 6,
+    },
+    activeBadgeText: {
+        color: ACCENT_GREEN,
         fontFamily: 'Inter_700Bold',
-        borderWidth: 1,
-        borderColor: '#222',
+        fontSize: 8,
+    },
+    cardDivider: {
+        height: 1,
+        backgroundColor: BORDER,
+        marginVertical: 12,
     },
     cardBody: {
-        gap: 12,
+        gap: 6,
     },
-    cardBodyCenter: {
-        alignItems: 'center',
-        paddingVertical: 20,
+    bodyRow: {
+        flexDirection: 'row',
+        alignItems: 'baseline',
     },
-    dataRow: {
+    bodyLabel: {
+        color: TEXT_MUTED,
+        fontSize: 10,
+        fontFamily: 'Inter_700Bold',
+    },
+    bodyValue: {
+        color: TEXT_STANDARD,
+        fontSize: 11,
+        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    },
+    footer: {
+        marginTop: 32,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    dataKey: {
-        color: '#444',
-        fontFamily: 'Inter_700Bold',
+    footerLabel: {
+        color: TEXT_MUTED,
         fontSize: 9,
-        letterSpacing: 1,
+        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     },
-    dataValue: {
-        color: '#AAA',
-        fontFamily: 'Inter_400Regular',
-        fontSize: 13,
-        maxWidth: '60%',
-    },
-    highlightText: {
-        color: ACCENT,
-        fontFamily: 'Inter_700Bold',
-    },
-    divider: {
-        height: 1,
-        backgroundColor: BORDER,
-        marginVertical: 8,
-    },
-    pricingRow: {
-        flexDirection: 'column',
-        gap: 4,
-    },
-    pricingText: {
-        color: '#666',
-        fontFamily: 'Inter_400Regular',
-        fontSize: 11,
-    },
-    inactiveText: {
-        color: '#333',
-        fontFamily: 'Bungee_400Regular',
-        fontSize: 16,
-        marginBottom: 4,
-    },
-    subtext: {
-        color: '#222',
-        fontFamily: 'Inter_400Regular',
-        fontSize: 11,
-        textAlign: 'center',
-    },
-    footer: {
-        marginTop: 60,
-        paddingTop: 32,
-        borderTopWidth: 2,
-        borderTopColor: '#111',
+    syncBtn: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 40,
         alignItems: 'center',
+        gap: 6,
     },
-    footerBlock: {
-        gap: 4,
-    },
-    footerKey: {
-        color: '#333',
+    syncBtnText: {
+        color: TEXT_MUTED,
+        fontFamily: 'Inter_700Bold',
         fontSize: 9,
-        fontFamily: 'Inter_700Bold',
-        letterSpacing: 2,
+        textDecorationLine: 'underline',
     },
-    footerValue: {
-        color: '#666',
+    standardText: {
+        fontFamily: 'Inter_400Regular',
         fontSize: 14,
-        fontFamily: 'Bungee_400Regular',
-    },
-    refreshBtn: {
-        backgroundColor: ACCENT,
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-        marginLeft: 'auto',
-    },
-    refreshBtnText: {
-        color: '#000',
-        fontFamily: 'Inter_700Bold',
-        fontSize: 12,
     }
 });

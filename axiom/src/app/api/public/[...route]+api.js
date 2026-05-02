@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import * as handlers from './handlers'; 
+import * as handlers from '../../../api/public/handlers'; 
 
 /**
  * 🌎 PUBLIC API HUB (JS Edition)
