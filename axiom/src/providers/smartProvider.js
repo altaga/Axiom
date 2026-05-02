@@ -1,10 +1,8 @@
-import frame from "../assets/frame.png";
-import { Image } from "expo-image";
 import { useRouter, useSegments } from "expo-router";
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { useWallet } from "./walletProvider";
 import ContextModule from "./contextModule";
-import React, {
+import {
   createContext,
   useContext,
   useEffect,
