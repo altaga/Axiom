@@ -18,6 +18,7 @@ export const handleAgentRequest = async (c, tier, modelName, systemPrompt) => {
     const history = body.history || [];
 
     const tracker = new MQTTRequestTracker(traceId, c.req.path);
+    console.log(`[HANDLER_START] Tier: ${tier} | Model: ${modelName}`);
     
     try {
         await tracker.connect();
@@ -41,7 +42,10 @@ export const handleAgentRequest = async (c, tier, modelName, systemPrompt) => {
         };
 
         await tracker.log("LLM_INVOKE_START", { msgCount: messages.length });
+        console.log(`[HANDLER_INVOKE] Calling agent.invoke...`);
         const response = await agent.invoke(messages, config);
+        console.log(`[HANDLER_SUCCESS] Agent returned response. Content length: ${response.text?.length}`);
+        
         const parsed = parseAgentOutput(response.text);
 
         await tracker.log("REQUEST_SUCCESS", { content: parsed.content });
