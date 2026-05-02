@@ -1,5 +1,5 @@
 /**
- * 👛 GEPPETTO LABS - STANDALONE WALLET CONNECT BUTTON
+ * 👛 AXIOM LABS - STANDALONE WALLET CONNECT BUTTON
  * 
  * A reusable UI component that manages the connection state to the user's EVM wallet.
  * Integrates with the WalletProvider to handle connecting, loading, and disconnecting states.

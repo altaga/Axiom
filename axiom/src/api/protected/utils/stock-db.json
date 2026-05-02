@@ -1,0 +1,122 @@
+{
+  "AAPL": {
+    "symbol": "AAPL",
+    "price": 280.14,
+    "change": 3.24,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "Apple Inc.",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:31.386Z"
+  },
+  "MSFT": {
+    "symbol": "MSFT",
+    "price": 414.44,
+    "change": 1.63,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "Microsoft Corporation",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:32.539Z"
+  },
+  "GOOGL": {
+    "symbol": "GOOGL",
+    "price": 385.69,
+    "change": 0.23,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "Alphabet Inc.",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:33.677Z"
+  },
+  "AMZN": {
+    "symbol": "AMZN",
+    "price": 268.26,
+    "change": 1.21,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "Amazon.com, Inc.",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:34.812Z"
+  },
+  "NVDA": {
+    "symbol": "NVDA",
+    "price": 198.45,
+    "change": -0.56,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "NVIDIA Corporation",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:35.945Z"
+  },
+  "TSLA": {
+    "symbol": "TSLA",
+    "price": 390.82,
+    "change": 2.41,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "Tesla, Inc.",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:37.070Z"
+  },
+  "META": {
+    "symbol": "META",
+    "price": 608.745,
+    "change": -0.52,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "Meta Platforms, Inc.",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:38.205Z"
+  },
+  "NFLX": {
+    "symbol": "NFLX",
+    "price": 92.06,
+    "change": -1.66,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "Netflix, Inc.",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:39.345Z"
+  },
+  "AMD": {
+    "symbol": "AMD",
+    "price": 360.54,
+    "change": 1.71,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "Advanced Micro Devices, Inc.",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:40.469Z"
+  },
+  "INTC": {
+    "symbol": "INTC",
+    "price": 99.62,
+    "change": 5.44,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "Intel Corporation",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:41.625Z"
+  },
+  "BTC-USD": {
+    "symbol": "BTC-USD",
+    "price": 78489.54,
+    "change": 0.35,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "Bitcoin USD",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:42.763Z"
+  },
+  "ETH-USD": {
+    "symbol": "ETH-USD",
+    "price": 2311.85,
+    "change": 0.73,
+    "currency": "USD",
+    "marketState": "OPEN",
+    "displayName": "Ethereum USD",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T21:03:43.892Z"
+  }
+}

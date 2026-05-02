@@ -1,5 +1,5 @@
 /**
- * 🤖 GEPPETTO - LEAN LLM UTILS
+ * 🤖 AXIOM - LEAN LLM UTILS
  * 
  * Standardized message building and parsing without the LangChain overhead.
  */

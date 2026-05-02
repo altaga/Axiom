@@ -1,6 +1,7 @@
 import { get0GAgent } from "../../../core/0g-registry";
 import { parseAgentOutput } from "../../../core/llm";
 import { ALL_TOOLS } from "./tools";
+import { MQTTRequestTracker } from "../../../core/ws-logger";
 
 /**
  * 🛠️ PROTECTED AGENT HANDLER
@@ -16,12 +17,13 @@ export const handleAgentRequest = async (c, tier, modelName, systemPrompt) => {
     const message = body.message || body.prompt;
     const history = body.history || [];
 
-    console.log(`\n📥 [x402_RECEIVE] [${tier}] Trace: ${traceId}`);
-    console.log(`💬 User said: "${message.substring(0, 50)}${message.length > 50 ? '...' : ''}"`);
-    console.log(`🛠️ Tools Enabled: ${toolsEnabled}`);
-
+    const tracker = new MQTTRequestTracker(traceId, c.req.path);
+    
     try {
-        const agent = await get0GAgent(tier, modelName, systemPrompt);
+        await tracker.connect();
+        await tracker.log("REQUEST_START", { tier, model: modelName, toolsEnabled });
+
+        const agent = await get0GAgent(tier, modelName, systemPrompt, tracker);
 
         const messages = [
             { role: "system", content: systemPrompt },
@@ -33,12 +35,11 @@ export const handleAgentRequest = async (c, tier, modelName, systemPrompt) => {
             tools: toolsEnabled ? ALL_TOOLS : []
         };
 
-        console.log(`⚙️ [${tier}_PROCESS] Invoking Model: ${modelName}...`);
+        await tracker.log("LLM_INVOKE_START", { msgCount: messages.length });
         const response = await agent.invoke(messages, config);
         const parsed = parseAgentOutput(response.text);
 
-        console.log(`📤 [${tier}_SAY] Response generated (${response.text.length} chars).`);
-        console.log(`💰 Receipt:`, JSON.stringify(response.receipt));
+        await tracker.log("REQUEST_SUCCESS", { content: parsed.content });
 
         return c.json({
             status: "SUCCESS",
@@ -49,6 +50,9 @@ export const handleAgentRequest = async (c, tier, modelName, systemPrompt) => {
         });
     } catch (err) {
         console.error(`❌ [${tier}_CRASH]:`, err.message);
+        await tracker.log("PIPELINE_COLLAPSE", { error: err.message });
         return c.json({ status: "ERROR", error: err.message, traceId }, 500);
+    } finally {
+        await tracker.close();
     }
 };

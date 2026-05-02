@@ -1,5 +1,5 @@
 /**
- * 🛰️ GEPPETTO LABS - HEADER WALLET BUTTON
+ * 🛰️ AXIOM LABS - HEADER WALLET BUTTON
  * 
  * A compact version of the Wallet Connect button designed for placement in the 
  * App Navigation Header. Prioritizes space-efficiency while maintaining status state.

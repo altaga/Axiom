@@ -1,5 +1,5 @@
 /**
- * 🔒 GEPPETTO LABS - AUTHENTICATION / CONNECT SCREEN
+ * 🔒 AXIOM LABS - AUTHENTICATION / CONNECT SCREEN
  * 
  * This is the gateway screen for unauthenticated users.
  * It provides the main CTA for wallet connection and displays 

@@ -1,5 +1,5 @@
 /**
- * 🛠️ GEPPETTO LABS - CORE UTILITIES
+ * 🛠️ AXIOM LABS - CORE UTILITIES
  * 
  * Shared helper functions for the Axiom agent system.
  * Includes fetch-retry logic for unreliable networks and timestamp formatting for UI.

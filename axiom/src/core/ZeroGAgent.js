@@ -2,7 +2,7 @@ import { createZGComputeNetworkBroker } from "@0glabs/0g-serving-broker";
 import { ethers } from "ethers";
 
 /**
- * 🌌 GEPPETTO - LEAN 0G AGENT
+ * 🌌 AXIOM - LEAN 0G AGENT
  * 
  * This version is optimized for Cloudflare Workers by removing 
  * the heavy LangChain dependency and using direct fetch for inference.
@@ -27,18 +27,25 @@ export class ZeroGAgent {
     }
 
     async init() {
+        if (this.tracker) await this.tracker.log("0G_INIT_WALLET_START");
         console.log(`[0G_AGENT_INIT] Initializing wallet for ${this.agentName}...`);
         this.wallet = new ethers.Wallet(this.privateKey, this.provider);
         console.log(`[0G_AGENT_WALLET] Address: ${this.wallet.address}`);
         
+        if (this.tracker) await this.tracker.log("0G_INIT_BROKER_START");
         console.log(`[0G_AGENT_BROKER] Creating ZG Compute Broker...`);
         this.broker = await createZGComputeNetworkBroker(this.wallet);
+        
+        if (this.tracker) await this.tracker.log("AGENT_0G_INIT_COMPLETE");
         console.log(`[0G_AGENT_READY] Broker established.`);
     }
 
     async create(modelName, systemPrompt) {
+        if (this.tracker) await this.tracker.log("0G_CREATE_LIST_SERVICES_START");
         console.log(`[0G_SERVICE_DISCOVERY] Searching for model: ${modelName}`);
         const services = await this.broker.inference.listService();
+        
+        if (this.tracker) await this.tracker.log("0G_CREATE_LIST_SERVICES_COMPLETE", { count: services.length });
         console.log(`[0G_SERVICE_LIST] Found ${services.length} services:`);
         services.forEach(s => console.log(`  - ${s.model} (Provider: ${s.provider})` || `  - ${s.model}`));
 
@@ -49,6 +56,7 @@ export class ZeroGAgent {
 
         if (!service) {
             console.error(`[0G_SERVICE_NOT_FOUND] Could not find provider for ${modelName}`);
+            if (this.tracker) await this.tracker.log("0G_CREATE_ERROR", { error: "MODEL_NOT_FOUND", model: modelName });
             throw new Error(`Model [${modelName}] not found.`);
         }
 
@@ -59,11 +67,14 @@ export class ZeroGAgent {
             output: service.outputPrice.toString()
         };
 
+        if (this.tracker) await this.tracker.log("0G_CREATE_GET_METADATA_START", { provider: this.currentProvider });
         console.log(`[0G_SERVICE_SELECT] Using Provider: ${this.currentProvider} for Model: ${this.currentModel}`);
         
         console.log(`[0G_METADATA_FETCH] Fetching endpoint for provider...`);
         const { endpoint } = await this.broker.inference.getServiceMetadata(service.provider);
         this.endpoint = endpoint;
+        
+        if (this.tracker) await this.tracker.log("0G_CREATE_GET_HEADERS_START", { endpoint: this.endpoint });
         console.log(`[0G_ENDPOINT_RESOLVED] ${this.endpoint}`);
         
         return this;

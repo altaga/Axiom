@@ -1,5 +1,5 @@
 /**
- * 👑 GEPPETTO LABS - EXPANDED WALLET INFO COMPONENT
+ * 👑 AXIOM LABS - EXPANDED WALLET INFO COMPONENT
  * 
  * An informational UI component that displays the connected wallet's address and balance.
  * Used in settings or profile views where more granular account detail is required.

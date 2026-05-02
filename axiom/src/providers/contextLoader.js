@@ -1,5 +1,5 @@
 /**
- * ⚡ GEPPETTO LABS - CONTEXT INITIALIZATION LOADER
+ * ⚡ AXIOM LABS - CONTEXT INITIALIZATION LOADER
  * 
  * A headless component designed to trigger global state initialization on mount.
  * It ensures that the 'starter' flag is set within the ContextModule once the 

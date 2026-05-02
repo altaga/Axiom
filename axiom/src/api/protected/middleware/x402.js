@@ -1,7 +1,7 @@
 import { HTTPFacilitatorClient } from '@x402/core/server';
 
 /**
- * 🔒 GEPPETTO LABS - x402 MIDDLEWARE FACTORY (JS Edition)
+ * 🔒 AXIOM LABS - x402 MIDDLEWARE FACTORY (JS Edition)
  */
 
 const facilitatorClient = new HTTPFacilitatorClient({ 

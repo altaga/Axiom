@@ -8,9 +8,13 @@ Axiom is a full-stack, cross-platform AI gateway built on the [0G Compute Networ
 
 ---
 
-## Screenshots
+### Desktop App:
 
 ![Desktop Dashboard](images/Screen%20Desktop%2002.png)
+
+---
+### Mobile App:
+
 ![Mobile App](images/Screens%20Mobile.png)
 
 ---
@@ -18,8 +22,6 @@ Axiom is a full-stack, cross-platform AI gateway built on the [0G Compute Networ
 ## Architecture Overview
 
 ![System Diagram](images/0g.drawio.png)
-
-### The Full Request Lifecycle
 
 ### The Full Request Lifecycle
 
@@ -53,7 +55,7 @@ You can experience the complete autonomous economy directly in your browser. No 
 
 When you first open the web application, you are greeted by the Axiom chat interface. Because Axiom is an entirely zero-account ecosystem, there are no signup screens, usernames, or passwords. Your identity and session are intrinsically tied to your wallet, immediately establishing a seamless connection to our AI models. First, connect your wallet.
 
-<img src="./images/s1.png" width="33.32%" alt="Step 1: Initializing">
+<img src="./images/s1.png" width="100%" alt="Step 1: Initializing">
 
 ### Step 2: Claiming Testnet Gas (USDC Faucet)
 
@@ -222,21 +224,6 @@ The `ExactEvmScheme` uses an EIP-2612/EIP-3009 permit signature — a gasless, o
 
 Expo provides a single JavaScript codebase that compiles to iOS, Android, and Web. For Axiom, this means the same chat UI, wallet logic, and x402 payment flow works identically on a mobile device (native) and a desktop browser (web/SSR).
 
-### The Key Challenge: Node.js Crypto in a Browser
-
-The 0G serving broker and ethers.js are Node.js-native libraries. Running them in a browser (or React Native's JS engine) requires polyfilling the Node.js standard library. Axiom handles this in **`src/core/polyfills.js`** and Metro's `resolve.alias` configuration, providing `crypto-browserify`, `stream-browserify`, `buffer`, and `process` shims.
-
-```javascript
-// metro.config.js — aliased polyfills for browser compatibility
-resolver: {
-    alias: {
-        crypto: 'crypto-browserify',
-        stream: 'stream-browserify',
-        buffer: 'buffer',
-    }
-}
-```
-
 ### Expo Router + Hono API Routes
 
 Axiom uses **Expo Router's** file-based routing for both screens and API endpoints. The API routes (`src/api/`) run on the same server as the Expo app (using Metro's server-side rendering output), powered by **Hono** — an ultralight web framework designed for edge runtimes.
@@ -293,7 +280,7 @@ The tool loop runs entirely server-side inside `ZeroGAgent.invoke()`. Tool resul
 
 ---
 
-## Public API Endpoints
+## Public and Protected API Endpoints via Hono
 
 | Endpoint | Method | Auth | Description |
 |---|---|---|---|
@@ -304,28 +291,6 @@ The tool loop runs entirely server-side inside `ZeroGAgent.invoke()`. Tool resul
 | `/api/protected/advance` | POST | x402 (USDC) | Advanced tier inference (Qwen3.6+) |
 | `/api/protected/expert` | POST | x402 (USDC) | Expert tier inference (DeepSeek-v3) |
 | `/api/dashboard` | GET | None | Ledger balances and 0G sub-accounts |
-
-### Protected Request Format
-
-```mermaid
-graph LR
-    subgraph Request ["POST /api/protected/advance"]
-        direction TB
-        subgraph Headers ["HTTP Headers"]
-            H1["Content-Type: application/json"]
-            H2["X-Axiom-Trace-Id: abc123"]
-            H3["X-Tools-Enabled: true"]
-            H4["PAYMENT-SIGNATURE: base64(EIP-712)"]
-        end
-        subgraph Body ["JSON Payload"]
-            B1["message: 'Analyze current BTC price'"]
-            B2["history: [ {role, content}, ... ]"]
-            B3["context: { thread_id: '0x...' }"]
-        end
-    end
-```
-
----
 
 ## Tech Stack
 
@@ -342,3 +307,39 @@ graph LR
 | Finance Data | yahoo-finance2 |
 | Web Search | duck-duck-scrape |
 | Animations | react-native-reanimated 4 |
+
+---
+
+## 🛠️ OpenAI Proxy (IDE Integration)
+
+Axiom includes a specialized OpenAI-compatible proxy located in the `0g-openai-client/` directory. This allows you to use decentralized 0G models directly within coding IDEs like **Zed**, **Continue**, or **Cursor** by simply pointing them to a local or hosted Axiom endpoint.
+
+### Features
+- **OpenAI Compatibility**: Implements `/v1/chat/completions` and `/v1/models`.
+- **Streaming Support**: Full Server-Sent Events (SSE) streaming for real-time code generation.
+- **Auto-Model Mapping**: Automatically maps generic model names (e.g., `gpt-5`, `deepseek`) to the best available 0G providers.
+- **Zero-Config Web3**: Handles all 0G broker signatures and on-chain settlement behind a standard API interface.
+
+<img src="./images/zed.png">
+
+### Quick Start (Local Proxy)
+1. Navigate to the client directory:
+   ```bash
+   cd 0g-openai-client
+   npm install
+   ```
+2. Configure your environment:
+   ```bash
+   # Create a .env file
+   PRIVATE_KEY=your_0g_funded_private_key
+   PORT=3000
+   ```
+3. Launch the proxy:
+   ```bash
+   node index.js
+   ```
+
+### Connecting to Zed AI
+To use 0G models in the [Zed Editor](https://zed.dev/), add the following to your `settings.json`:
+
+<img src="./images/zed-0g.png">

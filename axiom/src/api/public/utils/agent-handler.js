@@ -1,9 +1,10 @@
-import { get0GAgent } from "../../../../core/0g-registry";
+import { get0GAgent } from "../../../core/0g-registry";
 import {
     SystemMessage,
     buildChatHistory,
     parseAgentOutput
-} from "../../../../core/llm";
+} from "../../../core/llm";
+import { MQTTRequestTracker } from "../../../core/ws-logger";
 
 /**
  * 🛠️ PUBLIC AGENT HANDLER
@@ -20,8 +21,13 @@ export const handleAgentRequest = async (c, tier, systemPrompt) => {
     const message = body.message || body.prompt;
     const history = body.history || [];
 
+    const tracker = new MQTTRequestTracker(traceId, c.req.path);
+
     try {
-        const agent = await get0GAgent(tier, MODEL_NAME, systemPrompt);
+        await tracker.connect();
+        await tracker.log("REQUEST_START", { tier, model: MODEL_NAME });
+
+        const agent = await get0GAgent(tier, MODEL_NAME, systemPrompt, tracker);
 
         const messages = [
             new SystemMessage(systemPrompt),
@@ -29,8 +35,11 @@ export const handleAgentRequest = async (c, tier, systemPrompt) => {
             { role: "user", content: message }
         ];
 
+        await tracker.log("LLM_INVOKE_START", { msgCount: messages.length });
         const response = await agent.invoke(messages);
         const parsed = parseAgentOutput(response.text);
+
+        await tracker.log("REQUEST_SUCCESS", { content: parsed.content });
 
         return c.json({
             status: "SUCCESS",
@@ -41,6 +50,9 @@ export const handleAgentRequest = async (c, tier, systemPrompt) => {
         });
     } catch (err) {
         console.error(`PUBLIC_${tier}_CRASH:`, err.message);
+        await tracker.log("PIPELINE_COLLAPSE", { error: err.message });
         return c.json({ status: "ERROR", error: err.message, traceId }, 500);
+    } finally {
+        await tracker.close();
     }
 };

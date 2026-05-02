@@ -2,7 +2,7 @@ import { search as ddgSearch } from "duck-duck-scrape";
 import yahooFinance from "yahoo-finance2";
 
 /**
- * 🛠️ GEPPETTO AGENT TOOLS
+ * 🛠️ AXIOM AGENT TOOLS
  * 
  * Production-ready tools for search, finance, and weather.
  */

@@ -1,6 +1,6 @@
 import "../core/polyfills";
 /**
- * 🏗️ GEPPETTO LABS - ROOT APPLICATION LAYOUT
+ * 🏗️ AXIOM LABS - ROOT APPLICATION LAYOUT
  * 
  * This is the entry point of the Expo Router application.
  * It handles:
@@ -47,7 +47,7 @@ export default function RootLayout() {
               initialRouteName="(screens)/connect"
               screenOptions={{
                 animation: "simple_push",
-                headerShown: false, // Standard Geppetto aesthetic: Custom headers instead of defaults.
+                headerShown: false, // Standard Axiom aesthetic: Custom headers instead of defaults.
                 contentStyle: { backgroundColor: "#0e0e10" }
               }}
             >

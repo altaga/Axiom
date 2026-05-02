@@ -2,7 +2,7 @@ import { Buffer } from 'buffer';
 import process from 'process';
 
 /**
- * 🛠️ GEPPETTO LABS - GLOBAL POLYFILLS
+ * 🛠️ AXIOM LABS - GLOBAL POLYFILLS
  * 
  * Injects Node.js globals (Buffer, process) into the browser/metro environment.
  * Required for cryptographic libraries like ripemd160 and ethers to function correctly.
