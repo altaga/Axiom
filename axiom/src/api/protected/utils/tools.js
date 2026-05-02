@@ -1,5 +1,6 @@
 import { search as ddgSearch } from "duck-duck-scrape";
 import yahooFinance from "yahoo-finance2";
+import stockDb from "./stock-db.json";
 
 /**
  * 🛠️ AXIOM AGENT TOOLS
@@ -63,13 +64,34 @@ export const financeTool = {
     },
     execute: async ({ symbol }) => {
         try {
-            const quote = await yahooFinance.quote(symbol);
+            const upperSymbol = symbol.toUpperCase();
+            
+            // 1. Check local DB first (Top 50 + Crypto)
+            if (stockDb[upperSymbol]) {
+                const entry = stockDb[upperSymbol];
+                return JSON.stringify({
+                    symbol: entry.symbol,
+                    price: entry.price,
+                    change: entry.change,
+                    currency: entry.currency,
+                    marketState: entry.marketState,
+                    displayName: entry.displayName,
+                    source: "Finance API Tool",
+                    updatedAt: entry.updatedAt
+                });
+            }
+
+            // 2. Fallback to Live Yahoo Finance for other symbols
+            const quote = await yahooFinance.quote(upperSymbol);
             return JSON.stringify({
                 symbol: quote.symbol,
                 price: quote.regularMarketPrice,
                 change: quote.regularMarketChangePercent,
                 currency: quote.currency,
-                marketState: quote.marketState
+                marketState: quote.marketState,
+                displayName: quote.displayName || quote.shortName || upperSymbol,
+                source: "Finance API Tool",
+                updatedAt: new Date().toISOString()
             });
         } catch (err) {
             return `Finance lookup failed: ${err.message}`;

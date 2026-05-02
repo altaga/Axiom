@@ -2,121 +2,531 @@
   "AAPL": {
     "symbol": "AAPL",
     "price": 280.14,
-    "change": 3.24,
+    "change": 3.23936,
     "currency": "USD",
-    "marketState": "OPEN",
-    "displayName": "Apple Inc.",
+    "marketState": "CLOSED",
+    "displayName": "Apple",
     "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:31.386Z"
+    "updatedAt": "2026-05-02T23:41:32.908Z"
   },
   "MSFT": {
     "symbol": "MSFT",
     "price": 414.44,
-    "change": 1.63,
+    "change": 1.63423,
     "currency": "USD",
-    "marketState": "OPEN",
-    "displayName": "Microsoft Corporation",
+    "marketState": "CLOSED",
+    "displayName": "Microsoft",
     "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:32.539Z"
+    "updatedAt": "2026-05-02T23:41:32.908Z"
   },
   "GOOGL": {
     "symbol": "GOOGL",
     "price": 385.69,
-    "change": 0.23,
+    "change": 0.231293,
     "currency": "USD",
-    "marketState": "OPEN",
+    "marketState": "CLOSED",
     "displayName": "Alphabet Inc.",
     "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:33.677Z"
+    "updatedAt": "2026-05-02T23:41:32.908Z"
   },
   "AMZN": {
     "symbol": "AMZN",
     "price": 268.26,
-    "change": 1.21,
+    "change": 1.20728,
     "currency": "USD",
-    "marketState": "OPEN",
-    "displayName": "Amazon.com, Inc.",
+    "marketState": "CLOSED",
+    "displayName": "Amazon.com",
     "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:34.812Z"
+    "updatedAt": "2026-05-02T23:41:32.908Z"
   },
   "NVDA": {
     "symbol": "NVDA",
     "price": 198.45,
-    "change": -0.56,
+    "change": -0.561212,
     "currency": "USD",
-    "marketState": "OPEN",
-    "displayName": "NVIDIA Corporation",
+    "marketState": "CLOSED",
+    "displayName": "NVIDIA",
     "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:35.945Z"
-  },
-  "TSLA": {
-    "symbol": "TSLA",
-    "price": 390.82,
-    "change": 2.41,
-    "currency": "USD",
-    "marketState": "OPEN",
-    "displayName": "Tesla, Inc.",
-    "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:37.070Z"
+    "updatedAt": "2026-05-02T23:41:32.908Z"
   },
   "META": {
     "symbol": "META",
     "price": 608.745,
-    "change": -0.52,
+    "change": -0.517229,
     "currency": "USD",
-    "marketState": "OPEN",
-    "displayName": "Meta Platforms, Inc.",
+    "marketState": "CLOSED",
+    "displayName": "Meta Platforms",
     "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:38.205Z"
+    "updatedAt": "2026-05-02T23:41:32.908Z"
+  },
+  "BRK-B": {
+    "symbol": "BRK-B",
+    "price": 473.01,
+    "change": -0.124577,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Berkshire Hathaway Inc. New",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:32.908Z"
+  },
+  "TSLA": {
+    "symbol": "TSLA",
+    "price": 390.82,
+    "change": 2.40809,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Tesla",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:32.908Z"
+  },
+  "UNH": {
+    "symbol": "UNH",
+    "price": 368.78,
+    "change": -0.458867,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "UnitedHealth Group Incorporated",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:32.908Z"
+  },
+  "LLY": {
+    "symbol": "LLY",
+    "price": 963.33,
+    "change": 3.07405,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Eli Lilly and Company",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:32.908Z"
+  },
+  "JPM": {
+    "symbol": "JPM",
+    "price": 312.47,
+    "change": -0.242636,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "JPMorgan Chase &",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:33.809Z"
+  },
+  "JNJ": {
+    "symbol": "JNJ",
+    "price": 227.19,
+    "change": -1.15728,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Johnson & Johnson",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:33.809Z"
+  },
+  "V": {
+    "symbol": "V",
+    "price": 328.03,
+    "change": -0.54875,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Visa",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:33.809Z"
+  },
+  "XOM": {
+    "symbol": "XOM",
+    "price": 152.75,
+    "change": -1.02378,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Exxon Mobil",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:33.809Z"
+  },
+  "MA": {
+    "symbol": "MA",
+    "price": 495.46,
+    "change": -1.48334,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Mastercard Incorporated",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:33.809Z"
+  },
+  "AVGO": {
+    "symbol": "AVGO",
+    "price": 421.28,
+    "change": 0.922312,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Broadcom",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:33.809Z"
+  },
+  "PG": {
+    "symbol": "PG",
+    "price": 147.26,
+    "change": 0.115574,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Procter & Gamble Company (The)",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:33.809Z"
+  },
+  "COST": {
+    "symbol": "COST",
+    "price": 1011.7,
+    "change": -0.278949,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Costco Wholesale",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:33.809Z"
+  },
+  "HD": {
+    "symbol": "HD",
+    "price": 323.88,
+    "change": -1.49635,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "The Home Depot",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:33.809Z"
+  },
+  "ADBE": {
+    "symbol": "ADBE",
+    "price": 250.71,
+    "change": 1.87322,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Adobe",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:33.809Z"
+  },
+  "CVX": {
+    "symbol": "CVX",
+    "price": 190.63,
+    "change": -1.38637,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Chevron",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:34.700Z"
   },
   "NFLX": {
     "symbol": "NFLX",
     "price": 92.06,
-    "change": -1.66,
+    "change": -1.65581,
     "currency": "USD",
-    "marketState": "OPEN",
-    "displayName": "Netflix, Inc.",
+    "marketState": "CLOSED",
+    "displayName": "Netflix",
     "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:39.345Z"
+    "updatedAt": "2026-05-02T23:41:34.700Z"
+  },
+  "ABBV": {
+    "symbol": "ABBV",
+    "price": 206.6,
+    "change": -2.23358,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "AbbVie",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:34.700Z"
+  },
+  "MRK": {
+    "symbol": "MRK",
+    "price": 112.16,
+    "change": 2.72944,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Merck &",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:34.700Z"
+  },
+  "CRM": {
+    "symbol": "CRM",
+    "price": 183.82,
+    "change": 4.12961,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Salesforce",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:34.700Z"
   },
   "AMD": {
     "symbol": "AMD",
     "price": 360.54,
-    "change": 1.71,
+    "change": 1.70668,
     "currency": "USD",
-    "marketState": "OPEN",
-    "displayName": "Advanced Micro Devices, Inc.",
+    "marketState": "CLOSED",
+    "displayName": "Advanced Micro Devices",
     "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:40.469Z"
+    "updatedAt": "2026-05-02T23:41:34.700Z"
+  },
+  "PEP": {
+    "symbol": "PEP",
+    "price": 157.41,
+    "change": -0.681432,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "PepsiCo",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:34.700Z"
+  },
+  "TMO": {
+    "symbol": "TMO",
+    "price": 469.21,
+    "change": -2.03566,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Thermo Fisher Scientific",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:34.700Z"
+  },
+  "KO": {
+    "symbol": "KO",
+    "price": 78.58,
+    "change": -0.228543,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Coca-Cola",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:34.700Z"
+  },
+  "WMT": {
+    "symbol": "WMT",
+    "price": 131.6,
+    "change": -0.250122,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Walmart",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:34.700Z"
+  },
+  "MCD": {
+    "symbol": "MCD",
+    "price": 286.64,
+    "change": -2.36724,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "McDonald's",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:35.667Z"
+  },
+  "DIS": {
+    "symbol": "DIS",
+    "price": 103.08,
+    "change": -0.645781,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Walt Disney Company (The)",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:35.667Z"
+  },
+  "BAC": {
+    "symbol": "BAC",
+    "price": 53.24,
+    "change": -0.411518,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Bank of America",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:35.667Z"
+  },
+  "CSCO": {
+    "symbol": "CSCO",
+    "price": 91.85,
+    "change": 0.382512,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Cisco Systems",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:35.667Z"
+  },
+  "PFE": {
+    "symbol": "PFE",
+    "price": 26.33,
+    "change": -1.38577,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Pfizer",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:35.667Z"
+  },
+  "ABT": {
+    "symbol": "ABT",
+    "price": 89.46,
+    "change": -1.46492,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Abbott Laboratories",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:35.667Z"
+  },
+  "ORCL": {
+    "symbol": "ORCL",
+    "price": 171.83,
+    "change": 6.4688,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Oracle",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:35.667Z"
   },
   "INTC": {
     "symbol": "INTC",
     "price": 99.62,
-    "change": 5.44,
+    "change": 5.4403,
     "currency": "USD",
-    "marketState": "OPEN",
-    "displayName": "Intel Corporation",
+    "marketState": "CLOSED",
+    "displayName": "Intel",
     "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:41.625Z"
+    "updatedAt": "2026-05-02T23:41:35.667Z"
+  },
+  "VZ": {
+    "symbol": "VZ",
+    "price": 48.11,
+    "change": 0.166566,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Verizon Communications",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:35.667Z"
+  },
+  "CMCSA": {
+    "symbol": "CMCSA",
+    "price": 27.19,
+    "change": 0.554732,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Comcast Corporation",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:35.667Z"
+  },
+  "NKE": {
+    "symbol": "NKE",
+    "price": 44.4,
+    "change": 0.0901734,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "NIKE",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:36.574Z"
+  },
+  "WFC": {
+    "symbol": "WFC",
+    "price": 80.81,
+    "change": -1.72687,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Wells Fargo & Company",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:36.574Z"
+  },
+  "DHR": {
+    "symbol": "DHR",
+    "price": 175.15,
+    "change": -2.1235,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Danaher",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:36.574Z"
+  },
+  "PM": {
+    "symbol": "PM",
+    "price": 166.38,
+    "change": 0.793601,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Philip Morris",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:36.574Z"
+  },
+  "UPS": {
+    "symbol": "UPS",
+    "price": 107.57,
+    "change": -1.13052,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "United Parcel Service",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:36.574Z"
+  },
+  "T": {
+    "symbol": "T",
+    "price": 26.12,
+    "change": -0.0382638,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "AT&T",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:36.574Z"
+  },
+  "MS": {
+    "symbol": "MS",
+    "price": 190.17,
+    "change": -0.220367,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Morgan Stanley",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:36.574Z"
+  },
+  "RTX": {
+    "symbol": "RTX",
+    "price": 173.99,
+    "change": -1.18135,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "RTX",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:36.574Z"
+  },
+  "AMAT": {
+    "symbol": "AMAT",
+    "price": 389.08,
+    "change": -1.37139,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "Applied Materials",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:36.574Z"
+  },
+  "QCOM": {
+    "symbol": "QCOM",
+    "price": 177.01,
+    "change": -1.43112,
+    "currency": "USD",
+    "marketState": "CLOSED",
+    "displayName": "QUALCOMM Incorporated",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:36.574Z"
   },
   "BTC-USD": {
     "symbol": "BTC-USD",
-    "price": 78489.54,
-    "change": 0.35,
+    "price": 78712.62,
+    "change": 0.6117162,
     "currency": "USD",
-    "marketState": "OPEN",
+    "marketState": "REGULAR",
     "displayName": "Bitcoin USD",
     "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:42.763Z"
+    "updatedAt": "2026-05-02T23:41:37.220Z"
   },
   "ETH-USD": {
     "symbol": "ETH-USD",
-    "price": 2311.85,
-    "change": 0.73,
+    "price": 2318.59,
+    "change": 1.0041231,
     "currency": "USD",
-    "marketState": "OPEN",
+    "marketState": "REGULAR",
     "displayName": "Ethereum USD",
     "source": "Finance API Tool",
-    "updatedAt": "2026-05-02T21:03:43.892Z"
+    "updatedAt": "2026-05-02T23:41:37.220Z"
+  },
+  "SOL-USD": {
+    "symbol": "SOL-USD",
+    "price": 84.4,
+    "change": 0.7761212,
+    "currency": "USD",
+    "marketState": "REGULAR",
+    "displayName": "Solana USD",
+    "source": "Finance API Tool",
+    "updatedAt": "2026-05-02T23:41:37.220Z"
   }
 }

@@ -87,23 +87,26 @@ export class ZeroGAgent {
 
     /**
      * DIRECT INFERENCE (No LangChain)
-     * Supports tool calling loop.
+     * Supports parallel tool calling with staggered delays and 60s timeouts.
      */
     async invoke(messagesOrInput, config = {}) {
         const messages = messagesOrInput.messages || messagesOrInput;
         const tools = config.tools || [];
         
-        console.log(`📡 [0G_INFERENCE] Model: ${this.currentModel} | Tools: ${tools.length}`);
+        console.log(`\n[0G_INVOKE_START] Model: ${this.currentModel} | Tools: ${tools.length}`);
         if (this.tracker) await this.tracker.log("LLM_INVOKE_START", { model: this.currentModel, toolCount: tools.length });
 
         let currentMessages = [...messages];
         let iteration = 0;
         const maxIterations = 5;
+        const API_TIMEOUT = 60000; // 60 seconds
 
         while (iteration < maxIterations) {
             iteration++;
+            console.log(`[0G_ITERATION_${iteration}] Starting...`);
 
             // 🛡️ Get 0G Signature Headers
+            console.log(`[0G_SIGN_STEP] Fetching headers for provider: ${this.currentProvider}`);
             const headers = await this.broker.inference.requestProcessor.getHeader(this.currentProvider);
 
             const body = {
@@ -125,77 +128,108 @@ export class ZeroGAgent {
                 body.tool_choice = "auto";
             }
 
-            if (this.verbose) {
-                console.log(`[0G_INFERENCE_REQUEST] Body:`, JSON.stringify(body, null, 2));
-            }
-
-            // 🚀 Direct Fetch to 0G Provider
-            const response = await fetch(`${this.endpoint}/chat/completions`, {
-                method: "POST",
-                headers: {
-                    ...headers,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            });
-
-            if (!response.ok) {
-                const errBody = await response.text();
-                throw new Error(`0G_INFERENCE_ERROR: ${response.status} - ${errBody}`);
-            }
-
-            const data = await response.json();
-            const responseMessage = data.choices[0]?.message;
-            const content = responseMessage?.content || "";
-            const toolCalls = responseMessage?.tool_calls || [];
-
-            if (toolCalls.length === 0) {
-                if (this.tracker) await this.tracker.log("LLM_INVOKE_COMPLETE");
-                return { 
-                    text: content, 
-                    receipt: { status: "processed", iterations: iteration } 
-                };
-            }
-
-            // Handle Tool Calls
-            currentMessages.push(responseMessage);
+            console.log(`[0G_FETCH_STEP] Calling 0G Inference API (Timeout: ${API_TIMEOUT}ms)...`);
             
-            for (const toolCall of toolCalls) {
-                const args = toolCall.function.arguments;
-                console.log(`🔧 [0G_TOOL_CALL] Executing ${toolCall.function.name} with args: ${args}`);
-                
-                if (this.tracker) {
-                    await this.tracker.log("TOOL_ACTIVATE", { 
-                        tool: toolCall.function.name, 
-                        input: args 
-                    });
-                }
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
 
-                const tool = tools.find(t => t.name === toolCall.function.name);
-                const result = tool 
-                    ? await tool.execute(JSON.parse(args))
-                    : `Tool ${toolCall.function.name} not found.`;
-
-                console.log(`✅ [0G_TOOL_RESULT] ${toolCall.function.name} returned: ${result.substring(0, 200)}${result.length > 200 ? '...' : ''}`);
-                
-                if (this.tracker) {
-                    await this.tracker.log("TOOL_RESULT", { 
-                        tool: toolCall.function.name, 
-                        output: result 
-                    });
-                }
-
-                currentMessages.push({
-                    role: "tool",
-                    tool_call_id: toolCall.id,
-                    name: toolCall.function.name,
-                    content: result
+            try {
+                const response = await fetch(`${this.endpoint}/chat/completions`, {
+                    method: "POST",
+                    headers: {
+                        ...headers,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(body),
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    const errBody = await response.text();
+                    console.error(`[0G_API_ERROR] Status: ${response.status} | Body: ${errBody}`);
+                    throw new Error(`0G_INFERENCE_ERROR: ${response.status} - ${errBody}`);
+                }
+
+                const data = await response.json();
+                const responseMessage = data.choices[0]?.message;
+                const content = responseMessage?.content || "";
+                const toolCalls = responseMessage?.tool_calls || [];
+
+                console.log(`[0G_RESPONSE_RECEIVED] Content length: ${content.length} | Tool calls: ${toolCalls.length}`);
+
+                if (toolCalls.length === 0) {
+                    console.log(`[0G_INVOKE_COMPLETE] Returning final response.`);
+                    if (this.tracker) await this.tracker.log("LLM_INVOKE_COMPLETE");
+                    return { 
+                        text: content, 
+                        receipt: { status: "processed", iterations: iteration } 
+                    };
+                }
+
+                // Handle Tool Calls in PARALLEL with staggered delays
+                console.log(`[0G_TOOL_STEP] Parallelizing ${toolCalls.length} tool calls...`);
+                currentMessages.push(responseMessage);
+                
+                const toolResults = await Promise.all(toolCalls.map(async (toolCall, index) => {
+                    const name = toolCall.function.name;
+                    const args = toolCall.function.arguments;
+                    
+                    // Stagger activation slightly to avoid sudden bursts (e.g. 200ms apart)
+                    const staggerDelay = index * 200;
+                    console.log(`[0G_TOOL_QUEUE] ${name} (stagger: ${staggerDelay}ms)`);
+                    await new Promise(r => setTimeout(r, staggerDelay));
+
+                    console.log(`🔧 [0G_TOOL_EXEC] Starting ${name} with: ${args.substring(0, 100)}`);
+                    
+                    if (this.tracker) {
+                        await this.tracker.log("TOOL_ACTIVATE", { tool: name, input: args });
+                    }
+
+                    try {
+                        const tool = tools.find(t => t.name === name);
+                        const result = tool 
+                            ? await tool.execute(JSON.parse(args))
+                            : `Tool ${name} not found.`;
+
+                        console.log(`✅ [0G_TOOL_SUCCESS] ${name} finished.`);
+                        
+                        if (this.tracker) {
+                            await this.tracker.log("TOOL_RESULT", { tool: name, output: result });
+                        }
+
+                        return {
+                            role: "tool",
+                            tool_call_id: toolCall.id,
+                            name: name,
+                            content: result
+                        };
+                    } catch (toolErr) {
+                        console.error(`❌ [0G_TOOL_FAILED] ${name}:`, toolErr.message);
+                        return {
+                            role: "tool",
+                            tool_call_id: toolCall.id,
+                            name: name,
+                            content: `Tool error: ${toolErr.message}`
+                        };
+                    }
+                }));
+
+                currentMessages.push(...toolResults);
+                console.log(`[0G_ITERATION_${iteration}_END] Tool results added. Re-invoking...`);
+                
+            } catch (err) {
+                clearTimeout(timeoutId);
+                if (err.name === 'AbortError') {
+                    console.error(`[0G_TIMEOUT_EXCEEDED] API call took longer than ${API_TIMEOUT}ms`);
+                    throw new Error("0G_INFERENCE_TIMEOUT");
+                }
+                throw err;
             }
-            
-            // Loop continues to send tool results back to LLM
         }
 
+        console.error(`[0G_MAX_ITERATIONS] Loop stopped after ${maxIterations} rounds.`);
         throw new Error("Maximum tool calling iterations exceeded.");
     }
 }
