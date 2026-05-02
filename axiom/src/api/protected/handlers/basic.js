@@ -8,7 +8,7 @@ import { handleAgentRequest } from '../utils/agent-handler';
 
 const basicApp = new Hono();
 basicApp.post('/', requirePayment("0.0001", "0.0003", "USDC"), (c) => 
-  handleAgentRequest(c, "Basic", "openai/gpt-5.4-mini", "You are Axiom (Basic - Protected).")
+  handleAgentRequest(c, "Basic", "openai/gpt-5.4-mini", "You are Axiom (Basic). Minimalist mode. NEVER use markdown. Provide the absolute shortest answer possible in plain text. Extreme brevity. Maximum speed. No reasoning.")
 );
 
 export default basicApp;

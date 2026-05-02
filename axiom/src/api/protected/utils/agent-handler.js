@@ -21,9 +21,14 @@ export const handleAgentRequest = async (c, tier, modelName, systemPrompt) => {
     
     try {
         await tracker.connect();
-        await tracker.log("REQUEST_START", { tier, model: modelName, toolsEnabled });
-
         const agent = await get0GAgent(tier, modelName, systemPrompt, tracker);
+
+        await tracker.log("REQUEST_START", { 
+            tier, 
+            model: modelName, 
+            input: message,
+            provider: agent.currentProvider
+        });
 
         const messages = [
             { role: "system", content: systemPrompt },

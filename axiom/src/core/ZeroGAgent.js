@@ -164,6 +164,13 @@ export class ZeroGAgent {
                 const args = toolCall.function.arguments;
                 console.log(`🔧 [0G_TOOL_CALL] Executing ${toolCall.function.name} with args: ${args}`);
                 
+                if (this.tracker) {
+                    await this.tracker.log("TOOL_ACTIVATE", { 
+                        tool: toolCall.function.name, 
+                        input: args 
+                    });
+                }
+
                 const tool = tools.find(t => t.name === toolCall.function.name);
                 const result = tool 
                     ? await tool.execute(JSON.parse(args))
@@ -171,6 +178,13 @@ export class ZeroGAgent {
 
                 console.log(`✅ [0G_TOOL_RESULT] ${toolCall.function.name} returned: ${result.substring(0, 200)}${result.length > 200 ? '...' : ''}`);
                 
+                if (this.tracker) {
+                    await this.tracker.log("TOOL_RESULT", { 
+                        tool: toolCall.function.name, 
+                        output: result 
+                    });
+                }
+
                 currentMessages.push({
                     role: "tool",
                     tool_call_id: toolCall.id,
