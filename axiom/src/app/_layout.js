@@ -48,6 +48,7 @@ export default function RootLayout() {
               screenOptions={{
                 animation: "simple_push",
                 headerShown: false, // Standard Geppetto aesthetic: Custom headers instead of defaults.
+                contentStyle: { backgroundColor: "#0e0e10" }
               }}
             >
               <Stack.Screen name="(screens)/index" />

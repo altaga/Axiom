@@ -167,43 +167,45 @@ export default function SmartProvider({ children }) {
           </TouchableOpacity>
         </View>
 
-      <View style={styles.sidebarFooter}>
-        {status === 'connected' ? (
-          <View style={[styles.walletInfo, isSidebarCollapsed && styles.walletInfoCollapsed]}>
-            {isSidebarCollapsed ? (
-              <View style={styles.statusDot} />
-            ) : (
-              <>
-                <View style={styles.walletHeader}>
-                  <View style={styles.statusDot} />
-                  <Text style={styles.walletAddress}>{account?.substring(0, 6)}...{account?.substring(account.length-4)}</Text>
-                </View>
-                <Text style={styles.walletBalance}>{usdcBalance ? Number(parseFloat(usdcBalance).toFixed(6)).toString() : "0"} USDC</Text>
-                
-                <View style={styles.cardSpendContainer}>
-                  <Text style={styles.cardSpendLabel}>Session Spend</Text>
-                  <Text style={styles.cardSpendValue}>{formattedSpend}</Text>
-                </View>
+      {(status === 'connected' || !segments.includes('connect')) && (
+        <View style={styles.sidebarFooter}>
+          {status === 'connected' ? (
+            <View style={[styles.walletInfo, isSidebarCollapsed && styles.walletInfoCollapsed]}>
+              {isSidebarCollapsed ? (
+                <View style={styles.statusDot} />
+              ) : (
+                <>
+                  <View style={styles.walletHeader}>
+                    <View style={styles.statusDot} />
+                    <Text style={styles.walletAddress}>{account?.substring(0, 6)}...{account?.substring(account.length-4)}</Text>
+                  </View>
+                  <Text style={styles.walletBalance}>{usdcBalance ? Number(parseFloat(usdcBalance).toFixed(6)).toString() : "0"} USDC</Text>
+                  
+                  <View style={styles.cardSpendContainer}>
+                    <Text style={styles.cardSpendLabel}>Session Spend</Text>
+                    <Text style={styles.cardSpendValue}>{formattedSpend}</Text>
+                  </View>
 
-                <TouchableOpacity style={styles.disconnectLink} onPress={disconnect}>
-                  <Text style={styles.disconnectLinkText}>Disconnect</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-        ) : (
-          <TouchableOpacity 
-            style={[styles.connectButton, isSidebarCollapsed && styles.connectButtonCollapsed]} 
-            onPress={() => router.push('/connect')}
-          >
-            {isSidebarCollapsed ? (
-              <Ionicons name="wallet-outline" size={20} color="#0e0e10" />
-            ) : (
-              <Text style={styles.connectButtonText}>Connect Wallet</Text>
-            )}
-          </TouchableOpacity>
-        )}
-      </View>
+                  <TouchableOpacity style={styles.disconnectLink} onPress={disconnect}>
+                    <Text style={styles.disconnectLinkText}>Disconnect</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          ) : (
+            <TouchableOpacity 
+              style={[styles.connectButton, isSidebarCollapsed && styles.connectButtonCollapsed]} 
+              onPress={() => router.push('/connect')}
+            >
+              {isSidebarCollapsed ? (
+                <Ionicons name="wallet-outline" size={20} color="#0e0e10" />
+              ) : (
+                <Text style={styles.connectButtonText}>Connect Wallet</Text>
+              )}
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
      </View>
     </Animated.View>
   );

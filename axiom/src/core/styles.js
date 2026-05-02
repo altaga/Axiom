@@ -19,7 +19,7 @@ const normalizeFontSize = (size) => {
 export const iconSize = normalizeFontSize(16);
 export const screenHeight = Dimensions.get("screen").height;
 export const windowHeight = Dimensions.get("window").height;
-export const backgroundColor = "#131314";
+export const backgroundColor = "#0e0e10";
 export const mainColor = "#6366F1";
 export const header = 64;
 export const footer = 0;

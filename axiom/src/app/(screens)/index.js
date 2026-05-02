@@ -41,7 +41,7 @@ export default function SplashLoading() {
 
   return (
     // UI: A premium, centered-logo splash view with a subtle glow effect.
-    <View style={[GlobalStyles.container, { backgroundColor: "#131314" }]}>
+    <View style={[GlobalStyles.container, { backgroundColor: GlobalStyles.backgroundColor }]}>
       <View style={{
         shadowColor: "#6366F1", // Indigo Glow
         shadowOffset: { width: 0, height: 0 },

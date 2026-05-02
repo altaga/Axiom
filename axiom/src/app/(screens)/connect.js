@@ -12,11 +12,15 @@ import { StyleSheet, Text, View } from "react-native";
 
 import ConnectWallet from "../../components/walletButton";
 import GlobalStyles from "../../core/styles";
+import { useSmartSize } from "../../providers/smartProvider";
 import { useWallet } from "../../providers/walletProvider";
 
 export default function Connect() {
   const { status } = useWallet();
+  const { isDesktop } = useSmartSize();
   const router = useRouter();
+
+  const bgColor = isDesktop ? "#0e0e10" : GlobalStyles.backgroundColor;
 
   /**
    * AUTH GUARD:
@@ -31,7 +35,7 @@ export default function Connect() {
 
   return (
     // UI: Centered login card on a deep matte-black background.
-    <View style={[GlobalStyles.container, { backgroundColor: "#131314", alignItems: "center", justifyContent: "center" }]}>
+    <View style={[GlobalStyles.container, { backgroundColor: bgColor, alignItems: "center", justifyContent: "center" }]}>
       <View style={styles.card}>
         {/* HEADER SECTION: Branding and Product Identity */}
         <View style={styles.headerContainer}>
