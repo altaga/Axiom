@@ -71,9 +71,9 @@ If you are visiting for the first time and your wallet lacks the necessary USDC 
 Axiom operates an intelligent tiered AI agent system. You have granular control over your queries, and can select between different complexity modes—each strictly backed by a micro-transaction proportionate to the compute used:
 
 - **Basic Mode ($0.0001):** Ideal for quick answers, powered by lightweight models like `gpt-5.4-mini`.
-- **Advanced Mode ($0.001):** For deep reasoning and analysis using `Qwen` or `DeepSeek`.
-- **Expert Mode ($0.01):** For deep reasoning and analysis using `Qwen` or `DeepSeek`.
-- **Enhanced Requests with Tools:** The agent can access specialized tools for web search, financial data, and weather, allowing it to autonomously browse the real-time internet or ingest live market news.
+- **Advanced Mode ($0.001):** For deep reasoning and analysis using `Qwen`.
+- **Expert Mode ($0.01):** For complex tasks and deep analysis using `DeepSeek`.
+- **Enhanced Requests with Tools:** The agent can access specialized tools (DuckDuckGo, Yahoo Finance, Weather) for an additional cost (e.g., **$0.0003 - $0.02** depending on the tier).
 
 1. Type a question into the chat (e.g., *"What is the current BTC price?"* or *"Search the web for the latest 0G network news"*).
 2. Select whether to enable **Tools (Search, Finance, Weather)** via the interface options.
