@@ -106,7 +106,25 @@ After the payment authorization settles, the AI agent's reasoning streams direct
 
 <img src="./images/answer.png" alt="Step 8: Engaging with the AI">
 
+### Step 6: Monitoring the 0G Ledger (Dashboard)
+
+Axiom provides a dedicated administrative dashboard for real-time monitoring of your 0G network accounts. This allows you to track exactly how many credits are allocated to different AI models and monitor your native A0GI gas balance.
+
+<img src="./images/dashboard.png" width="100%" alt="Axiom 0G Dashboard">
+
+#### Key Components:
+- **A0GI Native Balance**: Displays the raw gas tokens held in the server wallet on the 0G Chain (needed for transaction settlement).
+- **Protocol Ledger**: 
+    - **Total**: The gross balance deposited into the 0G serving broker.
+    - **Locked**: Credits currently reserved in active sub-accounts for specific providers.
+    - **Available**: Liquidity ready to be allocated to new model tiers or used for top-ups.
+- **Model Sub-Accounts**: A granular breakdown of every active inference account.
+    - **Tier Mapping**: Automatically categorizes providers into **BASIC**, **ADVANCED**, or **EXPERT** based on the served model.
+    - **Token Range Logic**: Dynamically calculates the estimated remaining Input/Output tokens based on the sub-account balance and the provider's real-time pricing.
+    - **Provider Transparency**: Displays the exact 0G provider address for every model, ensuring a fully decentralized and auditable compute chain.
+
 ---
+
 
 ## 0G Network Integration
 
