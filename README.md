@@ -353,7 +353,7 @@ The tool loop runs entirely server-side inside `ZeroGAgent.invoke()`. Tool resul
 
 ---
 
-## 🛠️ OpenAI Proxy (IDE Integration)
+## 🛠️ OpenAI Proxy (IDE Integration) EXTRA TOOL
 
 Axiom includes a specialized OpenAI-compatible proxy located in the `0g-openai-client/` directory. This allows you to use decentralized 0G models directly within coding IDEs like **Zed**, **Continue**, or **Cursor** by simply pointing them to a local or hosted Axiom endpoint.
 
