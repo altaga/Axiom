@@ -84,7 +84,8 @@ export class ZeroGAgent {
     async invoke(messagesOrInput, config = {}) {
         const messages = messagesOrInput.messages || messagesOrInput;
         const tools = config.tools || [];
-        if (this.tracker) await this.tracker.log("LLM_INVOKE_START", { model: this.currentModel, toolCount: tools.length });
+        
+        // 🤫 Internal agent logs removed to save Cloudflare subrequests
 
         const withTimeout = async (promise, timeoutMs, errorMessage) => {
             let timeoutId;
@@ -95,9 +96,10 @@ export class ZeroGAgent {
         };
 
         try {
+            // 🛡️ Get 0G Signature Headers (45s timeout for stability)
             const headers = await withTimeout(
                 this.broker.inference.requestProcessor.getHeader(this.currentProvider),
-                30000,
+                45000,
                 "0G_SIGNATURE_TIMEOUT"
             );
 

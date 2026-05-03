@@ -40,8 +40,8 @@ export const handleAgentRequest = async (c, tier, modelName, systemPrompt) => {
 
         while (iteration < maxIterations) {
             iteration++;
-            console.log(`[HANDLER_ITERATION_${iteration}] Starting...`);
-
+            // 🤫 Reduced iteration logs to save subrequests
+            
             // 1. Create Fresh Agent
             const agent = await get0GAgent(tier, modelName, systemPrompt, tracker);
             
