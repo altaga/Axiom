@@ -44,6 +44,9 @@ export default function SmartProvider({ children }) {
       const data = await response.json();
       if (response.ok) {
         toast.success("USDC Drop Requested!");
+        setTimeout(async () => {
+          await refreshBalance(account, publicClient);
+        }, 3000);
       } else {
         throw new Error(data.error || "Faucet drop failed");
       }
@@ -67,7 +70,7 @@ export default function SmartProvider({ children }) {
   }, [isSidebarCollapsed]);
   const router = useRouter();
   const segments = useSegments();
-  const { account, usdcBalance, status, disconnect } = useWallet();
+  const { account, usdcBalance, status, disconnect, refreshBalance, publicClient } = useWallet();
 
   useEffect(() => {
     setIsMounted(true);

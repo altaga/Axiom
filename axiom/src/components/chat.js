@@ -63,7 +63,7 @@ const SUGGESTIONS = [
 export default function AIAppChat() {
   const { isDesktop } = useSmartSize();
   const context = useContext(ContextModule);
-  const { walletClient, account, status, connect, usdcBalance } = useWallet();
+  const { walletClient, account, status, connect, usdcBalance, refreshBalance, publicClient } = useWallet();
 
   const listRef = useRef(null);
 
@@ -343,6 +343,11 @@ export default function AIAppChat() {
           } : undefined,
           duration: 6000,
         });
+        
+        // 🔄 REFRESH BALANCE: Small delay to let the chain catch up
+        setTimeout(async () => {
+          await refreshBalance(account, publicClient);
+        }, 3000);
       } else {
         throw new Error(data.error || "Faucet drop failed");
       }
@@ -366,7 +371,7 @@ export default function AIAppChat() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
       {/* SUB-HEADER: SESSION SPEND / FAUCET ACTION */}
-      {status === "connected" && (parseFloat(usdcBalance) > 0 || !isDesktop) && (
+      {status === "connected" && !isDesktop && (
         <View style={GeminiStyles.subHeader}>
           {parseFloat(usdcBalance) === 0 ? (
             <>

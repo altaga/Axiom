@@ -269,8 +269,9 @@ export const WalletProvider = ({ children }) => {
       connect,
       disconnect,
       sendTransaction,
+      refreshBalance: updateAccountData,
     }),
-    [account, balance, usdcBalance, status, error, txLoading],
+    [account, balance, usdcBalance, status, error, txLoading, connect, disconnect, updateAccountData],
   );
 
   return (
