@@ -1,57 +1,55 @@
 import { ZeroGAgent } from "./ZeroGAgent";
+import { createZGComputeNetworkBroker } from "@0glabs/0g-serving-broker";
+import { ethers } from "ethers";
+
+// 🌌 GLOBAL SINGLETONS: Only 1 instance for the entire worker
+let globalBroker = null;
 
 /**
- * 🌌 0G AGENT REGISTRY (Stable Simple Version)
- * 
- * Simple global cache for initialized agents.
+ * 🛠️ GET SHARED BROKER
  */
-if (!global.__0g_registry) {
-    global.__0g_registry = {};
-}
-const registry = global.__0g_registry;
-
-export async function get0GAgent(tier, modelName, systemPrompt, tracker = null) {
-    const key = `${tier.toLowerCase()}-${modelName.toLowerCase()}`;
-
-    // 🛠️ FRESH RESET MODE: Caching disabled to prevent state/resource leakage
-    console.log(`[0G_REGISTRY] Creating FRESH agent for ${key}...`);
-    if (tracker) await tracker.log("AGENT_0G_INIT_START", { tier });
+export async function getSharedBroker() {
+    if (globalBroker) return globalBroker;
 
     const privateKey = process.env.ZERO_G_PRIVATE_KEY;
-    if (!privateKey) throw new Error(`ZERO_G_PRIVATE_KEY not found.`);
+    if (!privateKey) throw new Error("ZERO_G_PRIVATE_KEY not found.");
 
+    console.log(`[0G_REGISTRY] Initializing Global Singleton Broker...`);
+    
+    const provider = new ethers.JsonRpcProvider("https://evmrpc.0g.ai", {
+        name: "0g-mainnet",
+        chainId: 16661
+    }, { staticNetwork: true });
+
+    const wallet = new ethers.Wallet(privateKey, provider);
+    globalBroker = await createZGComputeNetworkBroker(wallet);
+    
+    return globalBroker;
+}
+
+export async function get0GAgent(tier, modelName, systemPrompt, tracker = null) {
+    const broker = await getSharedBroker();
+    
+    // Create a very thin, stateless wrapper for this specific request
     const agent = new ZeroGAgent({
-        privateKey: privateKey,
+        broker: broker,
         agentName: `Axiom-${tier}`,
-        verbose: process.env.VERBOSE_DEBUG === 'true',
         tracker: tracker
     });
 
-    await agent.init();
-    if (tracker) await tracker.log("AGENT_0G_CREATE_START", { modelName });
-    await agent.create(modelName, systemPrompt);
-
-    // registry[key] = agent; // Disabled for fresh reset mode
-    console.log(`✅ [0G_REGISTRY] Agent [${tier}] is ONLINE.`);
-    if (tracker) await tracker.log("AGENT_READY", { tier });
-
+    await agent.create(modelName);
     return agent;
 }
 
 /**
  * ⚡ PRE-WARM SERVICE REGISTRY
- * Populates caches in the background.
  */
 export async function preWarmRegistry() {
-    const models = ["qwen3.6-plus"];
-    const privateKey = process.env.ZERO_G_PRIVATE_KEY;
-    if (!privateKey) return;
-
-    for (const model of models) {
-        ZeroGAgent.preWarm(model, {
-            privateKey: privateKey,
-            agentName: "Axiom-Prewarmer"
-        }).catch(err => console.error(`[0G_PREWARM_FAIL] ${model}:`, err.message));
+    try {
+        const broker = await getSharedBroker();
+        await ZeroGAgent.preWarm("qwen3.6-plus", broker);
+    } catch (err) {
+        console.error(`[0G_PREWARM_FAIL]`, err.message);
     }
 }
 
