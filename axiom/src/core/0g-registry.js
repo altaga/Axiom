@@ -1,4 +1,4 @@
-import { ZeroGAgent } from "./ZeroGAgent";
+import { ZeroGAgent, SERVICE_CACHE } from "./ZeroGAgent";
 import { createZGComputeNetworkBroker } from "@0glabs/0g-serving-broker";
 import { ethers } from "ethers";
 
@@ -30,14 +30,25 @@ export async function getSharedBroker() {
 export async function get0GAgent(tier, modelName, systemPrompt, tracker = null) {
     const broker = await getSharedBroker();
     
-    // Create a very thin, stateless wrapper for this specific request
     const agent = new ZeroGAgent({
         broker: broker,
         agentName: `Axiom-${tier}`,
         tracker: tracker
     });
 
-    await agent.create(modelName);
+    // 🚀 CACHE-FIRST DISCOVERY: Only call create() if we don't have the endpoint
+    const cacheKey = modelName.toLowerCase();
+    if (!SERVICE_CACHE[cacheKey]) {
+        console.log(`[0G_REGISTRY] Cache miss for ${modelName}. Discovering...`);
+        await agent.create(modelName);
+    } else {
+        const cached = SERVICE_CACHE[cacheKey];
+        agent.currentModel = cached.model;
+        agent.currentProvider = cached.provider;
+        agent.currentPricing = cached.pricing;
+        agent.endpoint = cached.endpoint;
+    }
+
     return agent;
 }
 

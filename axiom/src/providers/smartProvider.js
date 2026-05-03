@@ -10,7 +10,8 @@ import {
   useState,
   useRef,
 } from "react";
-import { Dimensions, PixelRatio, Platform, View, Animated, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Dimensions, PixelRatio, Platform, View, Animated, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Linking } from "react-native";
+import { toast } from "react-native-sonner";
 
 // 1. Create the Context
 const SmartSizeContext = createContext({
@@ -28,6 +29,30 @@ export default function SmartProvider({ children }) {
   const [windowDimensions, setWindowDimensions] = useState(Dimensions.get("window"));
   const [isMounted, setIsMounted] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [faucetLoading, setFaucetLoading] = useState(false);
+
+  // FAUCET LOGIC
+  const handleFaucet = async () => {
+    if (!account || faucetLoading) return;
+    setFaucetLoading(true);
+    try {
+      const response = await fetch("/api/public/faucet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address: account }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        toast.success("USDC Drop Requested!");
+      } else {
+        throw new Error(data.error || "Faucet drop failed");
+      }
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setFaucetLoading(false);
+    }
+  };
   
   // ANIMATION STATE
   const sidebarWidthAnim = useRef(new Animated.Value(280)).current;
@@ -177,7 +202,21 @@ export default function SmartProvider({ children }) {
                     <View style={styles.statusDot} />
                     <Text style={styles.walletAddress}>{account?.substring(0, 6)}...{account?.substring(account.length-4)}</Text>
                   </View>
-                  <Text style={styles.walletBalance}>{usdcBalance ? Number(parseFloat(usdcBalance).toFixed(6)).toString() : "0"} USDC</Text>
+                  {parseFloat(usdcBalance) === 0 ? (
+                    <TouchableOpacity 
+                      style={styles.faucetButton} 
+                      onPress={handleFaucet}
+                      disabled={faucetLoading}
+                    >
+                      {faucetLoading ? (
+                        <ActivityIndicator size="small" color="#FFFFFF" />
+                      ) : (
+                        <Text style={styles.faucetButtonText}>Get Testnet USDC</Text>
+                      )}
+                    </TouchableOpacity>
+                  ) : (
+                    <Text style={styles.walletBalance}>{usdcBalance ? Number(parseFloat(usdcBalance).toFixed(6)).toString() : "0"} USDC</Text>
+                  )}
                   
                   <View style={styles.cardSpendContainer}>
                     <Text style={styles.cardSpendLabel}>Session Spend</Text>
@@ -332,6 +371,19 @@ const styles = {
   connectButtonText: {
     color: '#0e0e10',
     fontFamily: 'Inter_700Bold',
+  },
+  faucetButton: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    alignItems: 'center',
+    marginVertical: 8,
+  },
+  faucetButtonText: {
+    color: '#0e0e10',
+    fontFamily: 'Inter_700Bold',
+    fontSize: 13,
   },
   contentArea: {
     flex: 1,

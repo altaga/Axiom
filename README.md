@@ -55,7 +55,7 @@ You can experience the complete autonomous economy directly in your browser. No 
 
 When you first open the web application, you are greeted by the Axiom chat interface. Because Axiom is an entirely zero-account ecosystem, there are no signup screens, usernames, or passwords. Your identity and session are intrinsically tied to your wallet, immediately establishing a seamless connection to our AI models. First, connect your wallet.
 
-<img src="./images/s1.png" width="100%" alt="Step 1: Initializing">
+<img src="./images/connect.png" width="100%" alt="Step 1: Initializing">
 
 ### Step 2: Claiming Testnet Gas (USDC Faucet)
 
@@ -66,7 +66,7 @@ If you are visiting for the first time and your wallet lacks the necessary USDC 
 3. **What happens under the hood:** The request hits our public faucet endpoint where the Axiom Node triggers a transfer from its faucet wallet. It then signs a live transaction and sends **0.1 USDC (Base Sepolia)** directly to your address. This is performed entirely securely server-side.
 4. Your balance inside the application instantly reflects the drop. You are now fueled to begin the AI economy!
 
-<img src="./images/s2.png" width="32%" alt="Step 2: Claiming Testnet Gas"> <img src="./images/s3.png" width="32%" alt="Step 3: Claiming Testnet Gas"> <img src="./images/s4.png" width="32%" alt="Step 4: Claiming Testnet Gas">
+<img src="./images/facuet01.png" alt="Step 2: Claiming Testnet Gas">
 
 ### Step 3: Engaging with the AI (Tiered Pricing)
 
@@ -81,7 +81,7 @@ Axiom operates an intelligent tiered AI agent system. You have granular control 
 2. Select whether to enable **Tools (Search, Finance, Weather)** via the interface options.
 3. Hit Send.
 
-<img src="./images/s5.png" width="32%" alt="Step 5: Engaging with the AI"> <img src="./images/s7.png" width="32%" alt="Step 7: Engaging with the AI">
+<img src="./images/models.png" alt="Step 5: Engaging with the AI">
 
 ### Step 4: The x402 Payment Intercept In Action
 
@@ -91,13 +91,13 @@ When you send a prompt, your request encounters the **x402 Payment Required** pr
 2. **Transaction Signing:** Your local application client handles this standard gracefully, prompting an EIP-712 Permit signature on Base Sepolia matching the explicit requested parameters.
 3. **Execution Unlocked:** The micro-transaction authorization is verified. Your payload is automatically re-submitted with cryptographic proof, the endpoint unlocks, and the 0G Compute Provider processes your prompt.
 
-<img src="./images/s9.png" width="100%" alt="Step 8: Engaging with the AI">
+<img src="./images/x402.png" width="100%" alt="Step 8: Engaging with the AI">
 
 ### Step 5: Validating Agent Responses
 
 After the payment authorization settles, the AI agent's reasoning streams directly into your chat interface. You can transparently trace the exact Base Sepolia micropayments. The Axiom economy is therefore self-sustained natively on-chain without any opaque centralized accounting!
 
-<img src="./images/s10.png" width="32%" alt="Step 8: Engaging with the AI">
+<img src="./images/answer.png" alt="Step 8: Engaging with the AI">
 
 ---
 

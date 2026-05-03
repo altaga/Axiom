@@ -365,8 +365,8 @@ export default function AIAppChat() {
       style={[styles.container, { backgroundColor: isDesktop ? "#0e0e10" : "#131314" }]}
       keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
-      {/* SUB-HEADER: SESSION SPEND / FAUCET ACTION (Fixed Height) - Hidden on Desktop */}
-      {status === "connected" && !isDesktop && (
+      {/* SUB-HEADER: SESSION SPEND / FAUCET ACTION */}
+      {status === "connected" && (parseFloat(usdcBalance) > 0 || !isDesktop) && (
         <View style={GeminiStyles.subHeader}>
           {parseFloat(usdcBalance) === 0 ? (
             <>

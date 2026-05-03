@@ -60,25 +60,26 @@ export const handleAgentRequest = async (c, tier, modelName, systemPrompt) => {
             console.log(`[HANDLER_AGENT_KILLED] Iteration ${iteration} turn complete.`);
 
             currentMessages.push(turn.message);
+            await tracker.flush(); // 🚀 Batch send turn logs
 
             if (turn.toolCalls.length === 0) {
                 finalContent = turn.content;
                 break;
             }
 
-            // 4. Execute Tools Independently (Agent is now dead)
+            // 4. Execute Tools Independently
             console.log(`[HANDLER_TOOLS] Executing ${turn.toolCalls.length} tools...`);
             const toolResults = await Promise.all(turn.toolCalls.map(async (toolCall, index) => {
                 const name = toolCall.function.name;
                 const args = toolCall.function.arguments;
                 
                 await new Promise(r => setTimeout(r, index * 200)); // Stagger
-                await tracker.log("TOOL_ACTIVATE", { tool: name, input: args });
+                tracker.log("TOOL_ACTIVATE", { tool: name, input: args });
 
                 try {
                     const tool = ALL_TOOLS.find(t => t.name === name);
                     const result = tool ? await tool.execute(JSON.parse(args)) : `Tool ${name} not found.`;
-                    await tracker.log("TOOL_RESULT", { tool: name, output: result });
+                    tracker.log("TOOL_RESULT", { tool: name, output: result });
 
                     return {
                         role: "tool",
@@ -87,12 +88,13 @@ export const handleAgentRequest = async (c, tier, modelName, systemPrompt) => {
                         content: result
                     };
                 } catch (err) {
-                    await tracker.log("TOOL_RESULT", { tool: name, output: `ERROR: ${err.message}` });
+                    tracker.log("TOOL_RESULT", { tool: name, output: `ERROR: ${err.message}` });
                     return { role: "tool", tool_call_id: toolCall.id, name: name, content: `Error: ${err.message}` };
                 }
             }));
 
             currentMessages.push(...toolResults);
+            await tracker.flush(); // 🚀 Batch send tool logs
             console.log(`[HANDLER_ITERATION_${iteration}_COMPLETE] Ready for re-invocation.`);
         }
 
