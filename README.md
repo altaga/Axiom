@@ -23,6 +23,13 @@ Axiom is a full-stack, cross-platform AI gateway built on the [0G Compute Networ
 
 ![System Diagram](images/0g.drawio.png)
 
+Axiom utilizes a sophisticated, multi-layered architecture designed for decentralization, scalability, and high-performance AI inference.
+
+- **Edge-Native Micro-services**: Built with [Hono](https://hono.dev/), an ultralight framework that allows the Axiom node to operate with minimal overhead in serverless environments like Cloudflare Workers or Vercel Edge.
+- **Event-Driven Payment-to-Inference Flow**: Integration of the x402 Protocol creates a reactive pattern where requests are paused at the middleware layer until a cryptographic payment proof is provided.
+- **Stateless Agent Execution**: Each inference turn is an independent operation, with session state managed via the client-server chat history, enhancing horizontal scalability.
+- **Layered Security Model**: Security is enforced through EIP-712 signature verification for payments and 0G-specific cryptographic headers for inference integrity.
+
 ### The Full Request Lifecycle
 
 ```mermaid
@@ -140,9 +147,13 @@ await fetch(`${endpoint}/chat/completions`, {
 
 The broker's `requestProcessor.getHeader()` generates a signed proof for each call. The provider validates this signature on-chain before executing inference. Cost is deducted automatically from a pre-funded ledger account associated with the server wallet.
 
-### Agent Registry & Caching
+### Agent Registry & Optimization
 
-**`src/core/0g-registry.js`** maintains a server-side singleton cache of initialized `ZeroGAgent` instances, keyed by `{tier}-{model}`. On first request for a given tier, the agent is initialized (wallet + broker + service discovery). Subsequent requests reuse the cached agent, eliminating the broker initialization overhead on the hot path.
+**`src/core/0g-registry.js`** implements several advanced optimization strategies to eliminate the latency typically associated with decentralized systems:
+
+- **Singleton Broker & Cache Management**: Maintains a server-side singleton cache of initialized `ZeroGAgent` instances. Subsequent requests reuse the cached agent, eliminating broker initialization overhead on the hot path.
+- **Service Pre-warming**: Proactively initializes connections to the 0G network upon server startup, ensuring that the first user request is handled with zero initialization delay.
+- **Lean Runtime (No LangChain)**: Optimized for edge runtimes by removing heavy framework dependencies, using direct fetch calls and streamlined message builders to reduce memory footprint.
 
 ### Model Tiers
 
@@ -268,7 +279,10 @@ src/
 
 ## Agent Tool Calling
 
-When the user enables tools in the UI (`X-Tools-Enabled: true` header), the agent enters a multi-step tool-calling loop (max 5 iterations) before returning a final answer. Available tools:
+When the user enables tools in the UI (`X-Tools-Enabled: true` header), the agent enters a multi-step tool-calling loop (max 5 iterations) before returning a final answer. 
+
+- **Parallelized Tool Execution**: Multiple tool calls are executed in parallel using `Promise.all`, significantly reducing total response time for complex, multi-step reasoning tasks.
+- **Real-time Observability**: Utilizes a "Neural Trace" via MQTT to provide a live log of the agent's internal reasoning and tool execution to the end-user.
 
 | Tool | Provider | Description |
 |---|---|---|
@@ -291,6 +305,17 @@ The tool loop runs entirely server-side inside `ZeroGAgent.invoke()`. Tool resul
 | `/api/protected/advance` | POST | x402 (USDC) | Advanced tier inference (Qwen3.6+) |
 | `/api/protected/expert` | POST | x402 (USDC) | Expert tier inference (DeepSeek-v3) |
 | `/api/dashboard` | GET | None | Ledger balances and 0G sub-accounts |
+
+---
+
+## Technical Strengths Summary
+
+- **Innovation**: First-of-its-kind integration of x402 payments with 0G decentralized compute.
+- **Efficiency**: Global singleton brokers and endpoint caching eliminate decentralized network overhead.
+- **Portability**: Lean, dependency-minimal core allows execution across diverse environments (Web, Mobile, Edge).
+- **Usability**: The IDE proxy makes 0G models immediately accessible to developers without changing their existing workflows.
+
+---
 
 ## Tech Stack
 
